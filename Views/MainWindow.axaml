@@ -1,0 +1,42 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SuperVision.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:models="using:SuperVision"
+        mc:Ignorable="d"
+        x:Class="SuperVision.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+		PointerPressed="Window_PointerPressed"
+        Icon="/Assets/icon.ico"
+        Title="SuperVision"
+		Width="192"
+        SizeToContent="Height"
+		CanResize="False"
+		SystemDecorations="BorderOnly">
+
+    <Window.ContextMenu>
+        <ContextMenu FontFamily="Courier New">
+            <MenuItem Header="Connect" Command="{Binding ConnectCommand}"/>
+            <MenuItem Header="Use PAL" ToggleType="CheckBox" IsChecked="{Binding IsUsingPAL, Mode=TwoWay}" />
+            <Separator/>
+            <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
+        </ContextMenu>
+    </Window.ContextMenu>
+
+    <Panel Background="Transparent">
+        <ItemsControl ItemsSource="{Binding Widgets}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel HorizontalAlignment="Center"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl Content="{Binding}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Panel>
+</Window>

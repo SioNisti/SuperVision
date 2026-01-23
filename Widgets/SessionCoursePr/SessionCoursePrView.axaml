@@ -1,0 +1,14 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:widget="using:SuperVision.Widgets.SessionCoursePr"
+             x:Class="SuperVision.Widgets.SessionCoursePr.SessionCoursePrView"
+             x:DataType="widget:SessionCoursePrViewModel">
+    
+    <Border Background="{Binding BgColor}" Padding="10,5">
+        <TextBlock Text="{Binding SessionCoursePrs}" 
+                   Foreground="{Binding FontColor}" 
+                   FontSize="22"
+                   FontFamily="Courier New"
+                   HorizontalAlignment="Center"/>
+    </Border>
+</UserControl>

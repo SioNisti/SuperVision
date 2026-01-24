@@ -1,0 +1,77 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SuperVision.ViewModels"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        x:Class="SuperVision.Views.LayoutEditor"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Layout Editor"
+        Icon="/Assets/icon.ico"
+        SizeToContent="Width"
+		CanResize="False"
+        Height="400">
+
+    <Grid RowDefinitions="*, Auto">
+        <DataGrid Grid.Row="0" Name="WidgetGrid" ItemsSource="{Binding Widgets}" AutoGenerateColumns="False" CanUserSortColumns="False">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Order" Width="80">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:WidgetViewModel">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
+                                <Button Content="▲" 
+                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).MoveWidgetUpCommand}"
+                                        CommandParameter="{Binding}"/>
+                                <Button Content="▼" 
+                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).MoveWidgetDownCommand}"
+                                        CommandParameter="{Binding}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Type" FontSize="14" x:DataType="vm:WidgetViewModel" Binding="{Binding DisplayName}" IsReadOnly="True" />
+                <DataGridTextColumn Header="Font" FontSize="14" x:DataType="vm:WidgetViewModel" Binding="{Binding FontColor}" />
+                <DataGridTextColumn Header="BG" FontSize="14" x:DataType="vm:WidgetViewModel" Binding="{Binding BgColor}" />
+            
+                <DataGridTemplateColumn Header="Remove" Width="auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="vm:WidgetViewModel">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
+                                <Button Content="X" 
+                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).RemoveWidgetCommand}"
+                                        CommandParameter="{Binding}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Grid Grid.Row="1" Margin="10" ColumnDefinitions="*, Auto, Auto">
+    
+            <ComboBox Grid.Column="0" 
+                      ItemsSource="{Binding AvailableWidgetTypes}"
+                      SelectedItem="{Binding SelectedWidgetType}"
+                      HorizontalAlignment="Stretch"
+                      Margin="0,0,10,0">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:MainWindowViewModel+WidgetTypeLookup">
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Button Grid.Column="1" 
+                    Content="Add" 
+                    Command="{Binding AddSelectedWidgetCommand}"
+                    Padding="15,5"
+                    Margin="0,0,10,0"
+                    Background="#3377FF" Foreground="White"/>
+
+            <Button Grid.Column="2" 
+                    Content="Save" 
+                    Command="{Binding SaveLayoutCommand}" 
+                    Padding="15,5"
+                    Background="Green" Foreground="White"/>
+        </Grid>
+    </Grid>
+</Window>

@@ -2,13 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:widget="using:SuperVision.Widgets.CoursePr"
              x:Class="SuperVision.Widgets.CoursePr.CoursePrView"
-             x:DataType="widget:CoursePrViewModel">
+             x:DataType="widget:CoursePrViewModel"
+             HorizontalAlignment="Stretch">
     
     <Border Background="{Binding BgColor}" Padding="10,5">
         <TextBlock Text="{Binding CoursePrs}" 
                    Foreground="{Binding FontColor}" 
                    FontSize="22"
-                   FontFamily="Courier New"
-                   HorizontalAlignment="Center"/>
+                   FontFamily="Courier New"/>
     </Border>
 </UserControl>

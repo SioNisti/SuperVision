@@ -2,6 +2,7 @@
 using SuperVision.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
@@ -11,6 +12,7 @@ namespace SuperVision.Widgets.CoursePr;
 
 public partial class CoursePrViewModel : WidgetViewModel
 {
+    public override string DisplayName => "Course PRs";
     public override string WidgetType => "CoursePr";
 
     public override Dictionary<uint, uint> GetRequiredAddresses()

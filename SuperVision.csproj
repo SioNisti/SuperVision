@@ -6,15 +6,18 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+	<PublishSingleFile>true</PublishSingleFile>
+	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 	  
-	<Version>2.0.0</Version>
+	<Version>2.1.0</Version>
 	<Authors>SioN</Authors>
 	<Company>sionTea</Company>
-	<Product>SuperVision SMK Time Trial Tool</Product>
+	<Copyright>sionTea</Copyright>
+	<Product>SuperVision - SMK Time Trial Tool</Product>
 	<Description>Reads the memory of Super Mario Kart with SD2SNES.</Description>
 
 	<AssemblyTitle>SuperVision</AssemblyTitle>
-	<FileVersion>2.0.0</FileVersion>
+	<FileVersion>2.1.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +31,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.3.11" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.11" />
     <PackageReference Include="Avalonia.Desktop" Version="11.3.11" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.11" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.11" />
@@ -40,6 +44,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\LayoutEditor.axaml.cs">
+      <DependentUpon>LayoutEditor.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Widgets\CoursePr\CoursePrView.axaml.cs">
       <DependentUpon>CoursePrView.axaml</DependentUpon>
     </Compile>
@@ -48,6 +55,9 @@
     </Compile>
     <Compile Update="Widgets\SessionCoursePr\SessionCoursePrView.axaml.cs">
       <DependentUpon>SessionCoursePrView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Widgets\SessionLapsReached\SessionLapsReachedView.axaml.cs">
+      <DependentUpon>SessionLapsReachedView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Widgets\Splits\SplitsView.axaml.cs">
       <DependentUpon>SplitsView.axaml</DependentUpon>

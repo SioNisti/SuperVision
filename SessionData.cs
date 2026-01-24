@@ -14,5 +14,6 @@ namespace SuperVision
         public int Flap { get; set; } = 0;
         public int Attempts { get; set; } = 0;
         public int FinishedRaces { get; set; } = 0;
+        public List<int> LapsReached { get; set; } = new List<int>([0,0,0,0,0]);
     }
 }

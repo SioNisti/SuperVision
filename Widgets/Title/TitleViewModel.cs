@@ -10,6 +10,7 @@ namespace SuperVision.Widgets.Title;
 
 public partial class TitleViewModel : WidgetViewModel
 {
+    public override string DisplayName => "Course Attempts";
     public override string WidgetType => "Title";
 
     public override Dictionary<uint, uint> GetRequiredAddresses() => new()
@@ -17,7 +18,7 @@ public partial class TitleViewModel : WidgetViewModel
         { 0xF50124, 1 }
     };
 
-    [ObservableProperty] private string _courseName = "MC3";
+    [ObservableProperty] private string _courseName = "MC3:";
     [ObservableProperty] private string _attemptRatio = "0/0";
 
     public override void UpdateState(Dictionary<uint, byte[]> data)
@@ -26,7 +27,7 @@ public partial class TitleViewModel : WidgetViewModel
         {
             byte courseId = bytes[0];
             string course = TrackNames.Map[courseId];
-            CourseName = course;
+            CourseName = $"{course}:";
             AttemptRatio = getAttempts(course);
         }
     }

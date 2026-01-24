@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -9,8 +10,9 @@ namespace SuperVision.Services
     public class AttemptDataService : IWidget
     {
         public string WidgetType => "Internal_AttemptLogger";
-        
+
         private bool _jsonLock = false;
+        private int  _lastCountedLap = 0;
 
         public Dictionary<uint, uint> GetRequiredAddresses() => new() {
             { 0xF50F33, 30 }, // Lap times
@@ -85,6 +87,24 @@ namespace SuperVision.Services
                     session.Flap = flap;
                 }
             }
+
+            //session laps reached.
+            if (lapReached >= 1 && lapReached <= 5)
+            {
+                if (_lastCountedLap != lapReached)
+                {
+                    session.LapsReached[lapReached - 1]++;
+                    _lastCountedLap = lapReached;
+                }
+            } else
+            {
+                _lastCountedLap = 0;
+            }
+            /*
+            for (int i = 1;i < 6;i++)
+            {
+                Debug.WriteLine($"L{i}: {session.LapsReached[i - 1]}");
+            }*/
         }
 
         private void AddRaceToJson(string character, int racetime, int[] laps)

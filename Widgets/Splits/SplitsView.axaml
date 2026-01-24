@@ -2,13 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:widget="using:SuperVision.Widgets.Splits"
              x:Class="SuperVision.Widgets.Splits.SplitsView"
-             x:DataType="widget:SplitsViewModel">
-    
+             x:DataType="widget:SplitsViewModel"
+             HorizontalAlignment="Stretch">
+
     <Border Background="{Binding BgColor}" Padding="10,5">
         <TextBlock Text="{Binding RaceSplits}" 
                    Foreground="{Binding FontColor}" 
                    FontSize="22"
-                   FontFamily="Courier New"
-                   HorizontalAlignment="Center"/>
+                   FontFamily="Courier New"/>
     </Border>
 </UserControl>

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
+using SuperVision.Views;
 
 namespace SuperVision.ViewModels
 {
@@ -129,6 +130,101 @@ namespace SuperVision.ViewModels
         private void Exit()
         {
             Environment.Exit(0);
+        }
+
+        [RelayCommand]
+        private void EditLayout()
+        {
+            var editor = new LayoutEditor(this);
+            editor.Show();
+        }
+
+        //LAYOUT EDITOR
+        [RelayCommand]
+        private void MoveWidgetUp(WidgetViewModel widget)
+        {
+            int index = Widgets.IndexOf(widget);
+            if (index > 0)
+            {
+                Widgets.RemoveAt(index);
+                Widgets.Insert(index - 1, widget);
+                OnPropertyChanged(nameof(Widgets));
+            }
+        }
+
+        [RelayCommand]
+        private void MoveWidgetDown(WidgetViewModel widget)
+        {
+            int index = Widgets.IndexOf(widget);
+            if (index < Widgets.Count - 1)
+            {
+                Widgets.RemoveAt(index);
+                Widgets.Insert(index + 1, widget);
+                OnPropertyChanged(nameof(Widgets));
+            }
+        }
+
+        [RelayCommand]
+        private void RemoveWidget(WidgetViewModel widget)
+        {
+            if (Widgets.Count < 2) return;
+
+            int index = Widgets.IndexOf(widget);
+            Widgets.RemoveAt(index);
+            OnPropertyChanged(nameof(Widgets));
+        }
+
+        [ObservableProperty]
+        private WidgetTypeLookup? _selectedWidgetType;
+
+        public record WidgetTypeLookup(string Name, Type Type);
+
+        public List<WidgetTypeLookup> AvailableWidgetTypes => Assembly.GetExecutingAssembly().GetTypes()
+            .Where(t => t.IsSubclassOf(typeof(WidgetViewModel)) && !t.IsAbstract)
+            .Select(t => {
+                var instance = (WidgetViewModel)Activator.CreateInstance(t)!;
+                return new WidgetTypeLookup(instance.DisplayName, t);
+            })
+            .OrderBy(l => l.Name)
+            .ToList();
+
+        [RelayCommand]
+        public void AddSelectedWidget()
+        {
+            if (SelectedWidgetType == null) return; 
+
+            try
+            {
+                Type t = SelectedWidgetType.Type;
+
+                var newWidget = (WidgetViewModel)Activator.CreateInstance(t)!;
+
+                newWidget.BgColor = "black";
+                newWidget.FontColor = "white";
+
+                Widgets.Add(newWidget);
+                _logic.ActiveWidgets.Add(newWidget);
+
+                Debug.WriteLine($"Successfully added: {newWidget.DisplayName}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error adding widget: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private void SaveLayout()
+        {
+            var settingsList = Widgets.Select(w => new WidgetSettings
+            {
+                Type = w.WidgetType,
+                FontColor = w.FontColor,
+                BgColor = w.BgColor
+            }).ToList();
+
+            string json = JsonSerializer.Serialize(settingsList, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(Globals.layoutPath, json);
         }
     }
 }

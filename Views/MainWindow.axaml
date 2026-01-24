@@ -18,25 +18,29 @@
     <Window.ContextMenu>
         <ContextMenu FontFamily="Courier New">
             <MenuItem Header="Connect" Command="{Binding ConnectCommand}"/>
+            <Separator/>
             <MenuItem Header="Use PAL" ToggleType="CheckBox" IsChecked="{Binding IsUsingPAL, Mode=TwoWay}" />
+            <MenuItem Header="Edit Layout" Command="{Binding EditLayoutCommand}"/>
             <Separator/>
             <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
         </ContextMenu>
     </Window.ContextMenu>
 
     <Panel Background="Transparent">
-        <ItemsControl ItemsSource="{Binding Widgets}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel HorizontalAlignment="Center"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
+            <ItemsControl ItemsSource="{Binding Widgets}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel HorizontalAlignment="Stretch"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <ContentControl Content="{Binding}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl Content="{Binding}"
+                                        HorizontalAlignment="Stretch" 
+                                        HorizontalContentAlignment="Stretch"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
     </Panel>
 </Window>

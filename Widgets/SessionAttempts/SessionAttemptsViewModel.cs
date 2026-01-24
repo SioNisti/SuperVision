@@ -10,17 +10,18 @@ namespace SuperVision.Widgets.SessionAttempts;
 
 public partial class SessionAttemptsViewModel : WidgetViewModel
 {
+    public override string DisplayName => "Attempts (Session)";
     public override string WidgetType => "SessionAttempts";
 
-    public override Dictionary<uint, uint> GetRequiredAddresses() => new()
+    public override Dictionary<uint, uint> GetRequiredAddresses()
     {
-        { 0xF50124, 1 }
-    };
+        return new Dictionary<uint, uint>(); //doesnt read memory
+    }
 
     [ObservableProperty] private string _attemptRatio = "0/0";
 
     public override void UpdateState(Dictionary<uint, byte[]> data)
     {
-            AttemptRatio = $"{Globals.sessionData[Globals.currentCourse].FinishedRaces}/{Globals.sessionData[Globals.currentCourse].Attempts}";
+        AttemptRatio = $"{Globals.sessionData[Globals.currentCourse].FinishedRaces}/{Globals.sessionData[Globals.currentCourse].Attempts}";
     }
 }

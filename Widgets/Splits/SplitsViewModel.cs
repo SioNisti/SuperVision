@@ -1,12 +1,19 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using SuperVision.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace SuperVision.Widgets.Splits;
 
 public partial class SplitsViewModel : WidgetViewModel
 {
+    public override string DisplayName => "Splits";
     public override string WidgetType => "Splits";
 
     public override Dictionary<uint, uint> GetRequiredAddresses() => new()
@@ -17,6 +24,8 @@ public partial class SplitsViewModel : WidgetViewModel
     };
 
     [ObservableProperty] private string _raceSplits = "Live:\n   L1 0'00\"00\n   L2 0'00\"00\n   L3 0'00\"00\n   L4 0'00\"00\n   L5 0'00\"00\nTOTAL 0'00\"00";
+
+    public bool _clipBoardLock = false;
 
     public override void UpdateState(Dictionary<uint, byte[]> data)
     {
@@ -38,12 +47,12 @@ public partial class SplitsViewModel : WidgetViewModel
         string totalTime = Globals.BytesToStr(totaltimeData[0], totaltimeData[1], totaltimeData[3]);
 
         int[] lapSplits = {
-                Math.Max(0, cs1),
-                Math.Max(0, cs2 - cs1),
-                Math.Max(0, cs3 - cs2),
-                Math.Max(0, cs4 - cs3),
-                Math.Max(0, cs5 - cs4)
-            };
+            Math.Max(0, cs1),
+            Math.Max(0, cs2 - cs1),
+            Math.Max(0, cs3 - cs2),
+            Math.Max(0, cs4 - cs3),
+            Math.Max(0, cs5 - cs4)
+        };
 
         if (lapreached < 6 && formatted5 == "0'00\"00")
         {
@@ -51,5 +60,30 @@ public partial class SplitsViewModel : WidgetViewModel
         }
 
         RaceSplits = $"Live:\n   L1 {Globals.CsToStr(lapSplits[0])}\n   L2 {Globals.CsToStr(lapSplits[1])}\n   L3 {Globals.CsToStr(lapSplits[2])}\n   L4 {Globals.CsToStr(lapSplits[3])}\n   L5 {Globals.CsToStr(lapSplits[4])}\nTOTAL {formatted5}";
+
+        if (lapSplits[4] > 0 && !_clipBoardLock)
+        {
+            _clipBoardLock = true;
+            CopyToClipboard($"{Globals.CsToStr(lapSplits[0])} {Globals.CsToStr(lapSplits[1])} {Globals.CsToStr(lapSplits[2])} {Globals.CsToStr(lapSplits[3])} {Globals.CsToStr(lapSplits[4])}");
+        }
+        else if (lapreached < 6)
+        {
+            _clipBoardLock = false;
+        }
+    }
+    public async Task CopyToClipboard(string text)
+    {
+        await Dispatcher.UIThread.InvokeAsync(async () =>
+        {
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                var window = desktop.MainWindow;
+
+                if (window?.Clipboard is { } clipboard)
+                {
+                    await clipboard.SetTextAsync(text);
+                }
+            }
+        });
     }
 }

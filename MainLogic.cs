@@ -37,7 +37,7 @@ namespace SuperVision
             }
             if (!File.Exists(Globals.layoutPath))
             {
-                File.WriteAllText(Globals.layoutPath, "[\r\n  { \"Type\": \"Splits\", \"FontColor\": \"#00FF00\", \"BgColor\": \"#000000\" }\r\n]");
+                File.WriteAllText(Globals.layoutPath, "[\r\n  { \"Type\": \"Splits\", \"FontColor\": \"white\", \"BgColor\": \"#000000\" }\r\n]");
             }
 
             Dictionary<string, Dictionary<string, CourseData>> allData;

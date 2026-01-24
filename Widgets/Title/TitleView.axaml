@@ -2,10 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:widget="using:SuperVision.Widgets.Title"
              x:Class="SuperVision.Widgets.Title.TitleView"
-             x:DataType="widget:TitleViewModel">
+             x:DataType="widget:TitleViewModel"
+             HorizontalAlignment="Stretch">
     
 <Border Background="{Binding BgColor}" Padding="10,5">
-        <Grid ColumnDefinitions="*, *">
+        <Grid ColumnDefinitions="Auto, *">
             <TextBlock Grid.Column="0" 
                        Text="{Binding CourseName}" 
                        Foreground="{Binding FontColor}" 

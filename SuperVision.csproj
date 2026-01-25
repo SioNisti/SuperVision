@@ -9,7 +9,7 @@
 	<PublishSingleFile>true</PublishSingleFile>
 	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 	  
-	<Version>2.1.0</Version>
+	<Version>2.2.0</Version>
 	<Authors>SioN</Authors>
 	<Company>sionTea</Company>
 	<Copyright>sionTea</Copyright>
@@ -17,7 +17,7 @@
 	<Description>Reads the memory of Super Mario Kart with SD2SNES.</Description>
 
 	<AssemblyTitle>SuperVision</AssemblyTitle>
-	<FileVersion>2.1.0</FileVersion>
+	<FileVersion>2.2.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,14 +41,21 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="MessageBox.Avalonia" Version="3.3.1.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\GrindEditor.axaml.cs">
+      <DependentUpon>GrindEditor.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\LayoutEditor.axaml.cs">
       <DependentUpon>LayoutEditor.axaml</DependentUpon>
     </Compile>
     <Compile Update="Widgets\CoursePr\CoursePrView.axaml.cs">
       <DependentUpon>CoursePrView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Widgets\GrindInfo\GrindInfoView.axaml.cs">
+      <DependentUpon>GrindInfoView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Widgets\SessionAttempts\SessionAttemptsView.axaml.cs">
       <DependentUpon>SessionAttemptsView.axaml</DependentUpon>

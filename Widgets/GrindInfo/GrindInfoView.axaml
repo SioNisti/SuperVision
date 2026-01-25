@@ -1,0 +1,14 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:widget="using:SuperVision.Widgets.GrindInfo"
+             x:Class="SuperVision.Widgets.GrindInfo.GrindInfoView"
+             x:DataType="widget:GrindInfoViewModel"
+             HorizontalAlignment="Stretch">
+    
+    <Border Background="{Binding BgColor}" Padding="10,5">
+        <TextBlock Text="{Binding GrindInfos}" 
+                   Foreground="{Binding FontColor}" 
+                   FontSize="22"
+                   FontFamily="Courier New"/>
+    </Border>
+</UserControl>

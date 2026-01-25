@@ -1,0 +1,61 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SuperVision.ViewModels"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        x:Class="SuperVision.Views.GrindEditor"
+        x:Name="Root"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Grind Editor"
+        Icon="/Assets/icon.ico"
+		CanResize="False"
+        Width="350"
+        Height="350">
+    
+    <Grid RowDefinitions="*, Auto">
+        <StackPanel Grid.Row="0" Margin="5" Spacing="10">
+            <TextBlock>Set Variables:</TextBlock>
+            <Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto" Margin="0" ColumnSpacing="5">
+                <ComboBox x:Name="CourseCombo" Grid.Column="0" Width="110" SelectedIndex="0" ItemsSource="{Binding #Root.CoursesList}"></ComboBox>
+                <ComboBox x:Name="RegionCombo" Grid.Column="1" Width="110" SelectedIndex="0">
+			        <ComboBoxItem>NTSC</ComboBoxItem>
+			        <ComboBoxItem>PAL</ComboBoxItem>
+                </ComboBox>
+                <ComboBox x:Name="TypeCombo" Grid.Column="2" Width="110" SelectedIndex="0">
+			        <ComboBoxItem>5lap</ComboBoxItem>
+			        <ComboBoxItem>Flap</ComboBoxItem>
+                </ComboBox>
+            </Grid>
+            <TextBlock>Set Goal (M:SS:MS):</TextBlock>
+            <Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto" Margin="0" ColumnSpacing="5">
+		        <NumericUpDown x:Name="TimeM" Grid.Column="0" Width="110" Minimum="0" Maximum="9"  Increment="1" Value="0"></NumericUpDown>
+		        <NumericUpDown x:Name="TimeS" Grid.Column="1" Width="110" Minimum="0" Maximum="59" Increment="1" Value="0"></NumericUpDown>
+		        <NumericUpDown x:Name="TimeMS" Grid.Column="2" Width="110" Minimum="0" Maximum="99" Increment="1" Value="0"></NumericUpDown>
+            </Grid>
+        </StackPanel>
+        
+        <StackPanel Grid.Row="1">
+			<TextBlock x:Name="ActiveStatusText" 
+               Text="Grind Currently Active" 
+               Foreground="Red" 
+               FontWeight="Bold" 
+               HorizontalAlignment="Center"
+               IsVisible="False"/>
+        </StackPanel>
+
+        <Grid Grid.Row="2" Margin="10" ColumnDefinitions="*, Auto, Auto">
+            <Button Grid.Column="0" 
+                    Content="Load" 
+                    Click="FindGrind"
+                    Padding="15,5"
+                    Margin="0,0,10,0"
+                    Background="#3377FF" Foreground="White"/>
+
+            <Button Grid.Column="1"
+                    x:Name="StartButton"
+                    Content="Start" 
+                    Click="StartGrind" 
+                    Padding="15,5"
+                    Background="Green" Foreground="White"/>
+        </Grid>
+    </Grid>
+</Window>

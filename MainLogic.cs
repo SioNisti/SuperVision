@@ -1,4 +1,5 @@
-﻿using SuperVision.Services;
+﻿using Avalonia.Controls;
+using SuperVision.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,19 +27,17 @@ namespace SuperVision
         //check if the json exists and that it's good.
         public void CheckJson()
         {
-            if (!Directory.Exists(Globals.folder))
-            {
-                Directory.CreateDirectory(Globals.folder);
-            }
+            if (!Directory.Exists(Globals.folder)) 
+               Directory.CreateDirectory(Globals.folder);
+
+            if (!Directory.Exists(Path.Combine(Globals.folder, "Grinds")))
+                Directory.CreateDirectory(Path.Combine(Globals.folder, "Grinds"));
 
             if (!File.Exists(Globals.jsonPath))
-            {
                 File.WriteAllText(Globals.jsonPath, "{}");
-            }
+
             if (!File.Exists(Globals.layoutPath))
-            {
                 File.WriteAllText(Globals.layoutPath, "[\r\n  { \"Type\": \"Splits\", \"FontColor\": \"white\", \"BgColor\": \"#000000\" }\r\n]");
-            }
 
             Dictionary<string, Dictionary<string, CourseData>> allData;
 

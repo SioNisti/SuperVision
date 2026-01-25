@@ -7,9 +7,9 @@ using System.Text.Json;
 
 namespace SuperVision.Services
 {
-    public class AttemptDataService : IWidget
+    public class GrindDataService : IWidget
     {
-        public string WidgetType => "Internal_AttemptLogger";
+        public string WidgetType => "Internal_GrindAttemptLogger";
 
         private bool _jsonLock = false;
         private int  _lastCountedLap = 0;
@@ -22,11 +22,13 @@ namespace SuperVision.Services
             { 0xF5002C, 1 },  //Game Mode
             { 0xF50036, 1 },  //Screen Mode
             { 0xF50162, 1 },  //Pause Mode
-            { 0xF50124, 1 }   //current course
         };
 
         public void UpdateState(Dictionary<uint, byte[]> data)
         {
+            //dont do anything if a grind isnt active
+            if (!Globals.isGrinding) return;
+
             //grab the data
             if (!data.TryGetValue(0xF50F33, out var lapData)) return;
 
@@ -36,7 +38,6 @@ namespace SuperVision.Services
             data.TryGetValue(0xF5002C, out var gModeData);
             data.TryGetValue(0xF50036, out var sModeData);
             data.TryGetValue(0xF50162, out var pModeData);
-            data.TryGetValue(0xF50124, out var courseData);
 
             //lap times
             int cs1 = Globals.StrToCs(Globals.BytesToStr(lapData[0], lapData[1], lapData[3]));
@@ -59,7 +60,6 @@ namespace SuperVision.Services
             int screenMode = sModeData?[0] ?? 0;
             int pauseMode = pModeData?[0] ?? 0;
             byte racerId = racerData?[0] ?? 0;
-            Globals.currentCourse = TrackNames.Map[courseData[0]];
 
             bool raceFinished = lapSplits[4] > 0 && lapReached == 6;
             bool shouldSave = gameMode == 0x04 && screenMode == 0x02 && (pauseMode == 0x03 || raceFinished);
@@ -75,117 +75,86 @@ namespace SuperVision.Services
             {
                 _jsonLock = false;
             }
-
-            //constantly updates the best flap for the course
-            var session = Globals.sessionData[Globals.currentCourse];
-            if (lapSplits.Where(l => l > 0).ToList().Any())
-            {
-                int flap = lapSplits.Where(l => l > 0).ToList().Min();
-
-                if (session.Flap == 0 || flap < session.Flap)
-                {
-                    session.Flap = flap;
-                }
-            }
-
-            //session laps reached.
-            if (lapReached >= 1 && lapReached <= 5)
-            {
-                if (_lastCountedLap != lapReached)
-                {
-                    session.LapsReached[lapReached - 1]++;
-                    _lastCountedLap = lapReached;
-                }
-            } else
-            {
-                _lastCountedLap = 0;
-            }
-            /*
-            for (int i = 1;i < 6;i++)
-            {
-                Debug.WriteLine($"L{i}: {session.LapsReached[i - 1]}");
-            }*/
         }
 
         private void AddRaceToJson(string character, int racetime, int[] laps)
         {
-            //SESSION
-            var session = Globals.sessionData[Globals.currentCourse];
-            session.Attempts++;
-
-            var json = File.ReadAllText(Globals.jsonPath);
-            var data = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, CourseData>>>(json);
+            var json = File.ReadAllText(Globals.grindPath);
+            var grindData = JsonSerializer.Deserialize<GrindData>(json);
+            if (grindData == null) return;
 
             int flap = laps.Where(l => l > 0).DefaultIfEmpty(0).Min();
 
-            var courseData = data[Globals.currentRegion][Globals.currentCourse];
-            var attempts = courseData.Attempts;
-            Race newRace = new Race
+            var attempts = grindData.Attempts;
+            grindData.Races.Add(new Race
             {
                 Id = ++attempts,
                 Character = character,
                 Date = DateTime.Now,
                 Racetime = racetime,
                 Laps = laps
-            };
-            courseData.Races.Add(newRace);
-            courseData.Attempts = attempts;
-
-            //session save
-            if (laps[4] > 0 && (racetime < session.FiveLap || session.FiveLap == 0))
-            {
-                session.FiveLap = racetime;
-            }
+            });
+            grindData.Attempts = attempts;
 
             //check if race was finished to update count. and potential prs.
             if (laps[4] > 0)
             {
-                courseData.Finishedraces++;
-                session.FinishedRaces++;
+                grindData.Finishedraces++;
+
+                if (racetime <= grindData.GoalTime && grindData.GoalType == "5Lap")
+                {
+                    grindData.EndDate = DateTime.Now;
+                    Globals.isGrinding = false;
+                }
+                if (flap <= grindData.GoalTime && grindData.GoalType == "Flap")
+                {
+                    grindData.EndDate = DateTime.Now;
+                    Globals.isGrinding = false;
+                }
 
                 //update best lap splits
-                for (int i = 0; i < courseData.Bestlaps.Length; i++)
+                for (int i = 0; i < grindData.Bestlaps.Length; i++)
                 {
                     //if no best lap exists (=0) or is lower than new lap
-                    if (courseData.Bestlaps[i] == 0)
+                    if (grindData.Bestlaps[i] == 0)
                     {
-                        courseData.Bestlaps[i] = attempts;
+                        grindData.Bestlaps[i] = attempts;
                     }
-                    else if (laps[i] < courseData.Races[courseData.Bestlaps[i] - 1].Laps[i])
+                    else if (laps[i] < grindData.Races[grindData.Bestlaps[i] - 1].Laps[i])
                     {
-                        courseData.Bestlaps[i] = attempts;
+                        grindData.Bestlaps[i] = attempts;
                     }
                 }
 
                 //update fivelap
-                if (courseData.Pr.Fivelap != 0)
+                if (grindData.Bests.Fivelap != 0)
                 {
-                    if (racetime < courseData.Races[courseData.Pr.Fivelap - 1].Racetime)
+                    if (racetime < grindData.Races[grindData.Bests.Fivelap - 1].Racetime)
                     {
-                        courseData.Pr.Fivelap = attempts;
+                        grindData.Bests.Fivelap = attempts;
                     }
                 }
                 else
                 {
-                    courseData.Pr.Fivelap = attempts;
+                    grindData.Bests.Fivelap = attempts;
                 }
 
                 //update flap
-                if (courseData.Pr.Flap != 0)
+                if (grindData.Bests.Flap != 0)
                 {
-                    if (flap < courseData.Races[courseData.Pr.Flap - 1].Laps.Min())
+                    if (flap < grindData.Races[grindData.Bests.Flap - 1].Laps.Min())
                     {
-                        courseData.Pr.Flap = attempts;
+                        grindData.Bests.Flap = attempts;
                     }
                 }
                 else
                 {
-                    courseData.Pr.Flap = attempts;
+                    grindData.Bests.Flap = attempts;
                 }
             }
 
-            json = JsonSerializer.Serialize(data, new JsonSerializerOptions() { WriteIndented = true });
-            File.WriteAllText(Globals.jsonPath, json);
+            json = JsonSerializer.Serialize(grindData, new JsonSerializerOptions() { WriteIndented = true });
+            File.WriteAllText(Globals.grindPath, json);
         }
     }
 }

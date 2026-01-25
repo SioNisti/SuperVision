@@ -1,6 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SuperVision.Services;
+using SuperVision.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +15,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
-using SuperVision.Views;
 
 namespace SuperVision.ViewModels
 {
@@ -33,7 +37,10 @@ namespace SuperVision.ViewModels
             //add the "logger" to the program. this is the thing that saves the data.json
             var logger = new AttemptDataService();
             _logic.ActiveWidgets.Add(logger);
-            
+            //add the "grinder" to the program. this is the thing that saves the grinding data, if a grind is active
+            var grinder = new GrindDataService();
+            _logic.ActiveWidgets.Add(grinder);
+
             Task.Run(() => RunMemoryLoop());
         }
         public ObservableCollection<WidgetViewModel> Widgets { get; set; } = new();
@@ -136,6 +143,13 @@ namespace SuperVision.ViewModels
         private void EditLayout()
         {
             var editor = new LayoutEditor(this);
+            editor.Show();
+        }
+
+        [RelayCommand]
+        private void EditGrind()
+        {
+            var editor = new GrindEditor(this);
             editor.Show();
         }
 

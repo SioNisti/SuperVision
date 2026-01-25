@@ -12,6 +12,8 @@ namespace SuperVision
         public static string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SuperVision");
         public static string jsonPath = Path.Combine(folder, "data.json");
         public static string layoutPath = Path.Combine(folder, "layout.json");
+        public static string grindFolder = Path.Combine(folder, "Grinds");
+        public static string grindPath = ""; //set in the GrindEditor.
 
         public static string[] courses = {
             "MC1", "DP1", "GV1", "BC1", "MC2",
@@ -22,6 +24,7 @@ namespace SuperVision
 
         public static string currentRegion { get; set; } = "NTSC";
         public static string currentCourse { get; set; } = "MC3";
+        public static bool isGrinding { get; set; } = false;
 
         public static Dictionary<string, SessionData> sessionData = new();
 

@@ -21,6 +21,7 @@
             <Separator/>
             <MenuItem Header="Use PAL" ToggleType="CheckBox" IsChecked="{Binding IsUsingPAL, Mode=TwoWay}" />
             <MenuItem Header="Edit Layout" Command="{Binding EditLayoutCommand}"/>
+            <MenuItem Header="Edit Grind" Command="{Binding EditGrindCommand}"/>
             <Separator/>
             <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
         </ContextMenu>

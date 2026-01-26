@@ -129,6 +129,7 @@ namespace SuperVision.Views
         {
             if (Globals.isGrinding)
             {
+                Globals.isGrinding = false;
                 ActiveStatusText.IsVisible = false;
                 StartButton.Background = Brush.Parse("green");
                 StartButton.Content = "Start";

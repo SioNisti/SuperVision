@@ -8,7 +8,16 @@ using System.Text.Json.Serialization;
 
 namespace SuperVision
 {
-    public class GrindData
+    public interface IRaceTracker
+    {
+        int Attempts { get; set; }
+        int Finishedraces { get; set; }
+        PersonalRecords Pr { get; set; }
+        int[] Bestlaps { get; set; }
+        int[] LapsReached { get; set; }
+        List<Race> Races { get; set; }
+    }
+    public class GrindData : IRaceTracker
     {
         public required string Region { get; set; }
         public required string Course { get; set; }
@@ -18,14 +27,9 @@ namespace SuperVision
         public required string GoalType { get; set; }
         public int Attempts { get; set; }
         public int Finishedraces { get; set; }
-        public Bests Bests { get; set; } = new();
+        public PersonalRecords Pr { get; set; } = new();
         public int[] Bestlaps { get; set; } = [0, 0, 0, 0, 0];
+        public int[] LapsReached { get; set; } = [0, 0, 0, 0, 0];
         public List<Race> Races { get; set; } = new();
-    }
-
-    public class Bests
-    {
-        public int Fivelap { get; set; }
-        public int Flap { get; set; }
     }
 }

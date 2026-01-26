@@ -37,9 +37,6 @@ namespace SuperVision.ViewModels
             //add the "logger" to the program. this is the thing that saves the data.json
             var logger = new AttemptDataService();
             _logic.ActiveWidgets.Add(logger);
-            //add the "grinder" to the program. this is the thing that saves the grinding data, if a grind is active
-            var grinder = new GrindDataService();
-            _logic.ActiveWidgets.Add(grinder);
 
             Task.Run(() => RunMemoryLoop());
         }
@@ -151,6 +148,17 @@ namespace SuperVision.ViewModels
         {
             var editor = new GrindEditor(this);
             editor.Show();
+        }
+
+        [RelayCommand]
+        private void OpenSaveDir()
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = Globals.folder,
+                UseShellExecute = true,
+                Verb = "open"
+            });
         }
 
         //LAYOUT EDITOR

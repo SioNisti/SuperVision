@@ -1,0 +1,14 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:widget="using:SuperVision.Widgets.SobSplits"
+             x:Class="SuperVision.Widgets.SobSplits.SobSplitsView"
+             x:DataType="widget:SobSplitsViewModel"
+             HorizontalAlignment="Stretch">
+
+    <Border Background="{Binding BgColor}" Padding="10,5">
+        <TextBlock Text="{Binding SobTimeSplits}" 
+                   Foreground="{Binding FontColor}" 
+                   FontSize="22"
+                   FontFamily="Courier New"/>
+    </Border>
+</UserControl>

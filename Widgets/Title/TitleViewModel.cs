@@ -10,7 +10,7 @@ namespace SuperVision.Widgets.Title;
 
 public partial class TitleViewModel : WidgetViewModel
 {
-    public override string DisplayName => "Course Attempts";
+    public override string DisplayName => "Attempts";
     public override string WidgetType => "Title";
 
     public override Dictionary<uint, uint> GetRequiredAddresses() => new()

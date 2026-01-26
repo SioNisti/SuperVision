@@ -20,11 +20,11 @@ public partial class GrindInfoViewModel : WidgetViewModel
         return new Dictionary<uint, uint>(); //doesnt read memory
     }
 
-    [ObservableProperty] private string _grindInfos = $"No Grind Active";
+    [ObservableProperty] private string _grindInfos = $"Grind Status\nInactive";
 
     public override void UpdateState(Dictionary<uint, byte[]> data)
     {
-        if (!Globals.isGrinding) return;
+        if (Globals.grindPath == "") return;
 
         var json = File.ReadAllText(Globals.grindPath);
         var gdata = JsonSerializer.Deserialize<GrindData>(json);

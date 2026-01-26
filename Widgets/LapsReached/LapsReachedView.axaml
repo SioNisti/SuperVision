@@ -1,0 +1,34 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:widget="using:SuperVision.Widgets.LapsReached"
+             x:Class="SuperVision.Widgets.LapsReached.LapsReachedView"
+             x:DataType="widget:LapsReachedViewModel"
+             HorizontalAlignment="Stretch">
+
+    <Border Background="{Binding BgColor}" Padding="10,5">
+        <StackPanel>
+            <TextBlock FontSize="22" FontFamily="Courier New" HorizontalAlignment="Left">All Time:</TextBlock>
+            
+            <ItemsControl ItemsSource="{Binding LapRows}" Foreground="{Binding FontColor}"> 
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="Auto, *">
+                    
+                            <TextBlock Grid.Column="0" 
+                                       Text="{Binding Label}" 
+                                       FontSize="22"
+                                       FontFamily="Courier New"
+                                       HorizontalAlignment="Left"/>
+
+                            <TextBlock Grid.Column="1" 
+                                       Text="{Binding Value}" 
+                                       FontSize="22"
+                                       FontFamily="Courier New"
+                                       HorizontalAlignment="Right"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Border>
+</UserControl>

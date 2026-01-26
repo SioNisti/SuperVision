@@ -11,7 +11,7 @@ namespace SuperVision.Widgets.SessionCoursePr;
 
 public partial class SessionCoursePrViewModel : WidgetViewModel
 {
-    public override string DisplayName => "PRs (Session)";
+    public override string DisplayName => "Course PRs (Session)";
     public override string WidgetType => "SessionCoursePr";
 
     public override Dictionary<uint, uint> GetRequiredAddresses()

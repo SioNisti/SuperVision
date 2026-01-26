@@ -63,6 +63,9 @@ namespace SuperVision.Services
             byte racerId = racerData?[0] ?? 0;
             Globals.currentCourse = TrackNames.Map[courseData[0]];
 
+            //check if the course is good (basically not a battle course)
+            if (!Globals.validateCourse(Globals.currentCourse)) return;
+
             var session = Globals.sessionData[Globals.currentCourse];
 
             bool raceFinished = lapSplits[4] > 0 && lapReached == 6;

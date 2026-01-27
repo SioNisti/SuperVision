@@ -89,7 +89,6 @@ namespace SuperVision.Views
             {
                 string path = files[0].Path.LocalPath;
 
-                Debug.WriteLine($"{path}");
                 Globals.grindPath = path;
 
                 PopulateUI(Globals.grindPath);
@@ -98,27 +97,26 @@ namespace SuperVision.Views
 
         private void SelectComboBoxItem(ComboBox box, string valueToFind)
         {
-            foreach (ComboBoxItem item in box.Items)
+            foreach (var item in from ComboBoxItem item in box.Items
+                                 where item.Content?.ToString() == valueToFind
+                                 select item)
             {
-                if (item.Content?.ToString() == valueToFind)
-                {
-                    box.SelectedItem = item;
-                    break;
-                }
+                box.SelectedItem = item;
+                break;
             }
         }
 
         private void PopulateUI(string path)
         {
             string json = File.ReadAllText(path);
-            var data = JsonSerializer.Deserialize<GrindData>(json);
-            if (data == null) return;
+            Globals.grindData = JsonSerializer.Deserialize<GrindData>(json);
+            if (Globals.grindData == null) return;
 
-            CourseCombo.SelectedItem = data.Course;
-            SelectComboBoxItem(RegionCombo, data.Region);
-            SelectComboBoxItem(TypeCombo, data.GoalType);
+            CourseCombo.SelectedItem = Globals.grindData.Course;
+            SelectComboBoxItem(RegionCombo, Globals.grindData.Region);
+            SelectComboBoxItem(TypeCombo, Globals.grindData.GoalType);
 
-            int totalCs = data.GoalTime;
+            int totalCs = Globals.grindData.GoalTime;
             TimeM.Value = totalCs / 6000;
             int remainder = totalCs % 6000;
             TimeS.Value = remainder / 100;
@@ -129,12 +127,14 @@ namespace SuperVision.Views
         {
             if (Globals.isGrinding)
             {
+                //stop grind
                 Globals.isGrinding = false;
                 ActiveStatusText.IsVisible = false;
                 StartButton.Background = Brush.Parse("green");
                 StartButton.Content = "Start";
                 return;
             }
+
             //new grind
             if (Globals.grindPath == "")
             {
@@ -168,13 +168,24 @@ namespace SuperVision.Views
                 if (!File.Exists(Globals.grindPath))
                 {
                     File.WriteAllText(Globals.grindPath, JsonSerializer.Serialize(grind, new JsonSerializerOptions { WriteIndented = true }));
+                    Globals.grindData = grind;
+                } else
+                {
+                    var box = MessageBoxManager.GetMessageBoxStandard(
+                        "Error",
+                        "This grind already exists.",
+                        ButtonEnum.Ok,
+                        MsBox.Avalonia.Enums.Icon.Error
+                    );
+                    await box.ShowAsync();
+                    return;
                 }
             } else
             {
                 string json = File.ReadAllText(Globals.grindPath);
-                var data = JsonSerializer.Deserialize<GrindData>(json);
+                Globals.grindData = JsonSerializer.Deserialize<GrindData>(json);
 
-                if (data.EndDate != null)
+                if (Globals.grindData.EndDate != null)
                 {
                     Globals.isGrinding = false;
                     ActiveStatusText.IsVisible = false;

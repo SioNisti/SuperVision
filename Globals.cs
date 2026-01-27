@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace SuperVision
@@ -27,6 +28,8 @@ namespace SuperVision
         public static bool isGrinding { get; set; } = false;
 
         public static Dictionary<string, SessionData> sessionData = new();
+        public static Dictionary<string, Dictionary<string, CourseData>>? AllTimeData { get; set; }
+        public static GrindData grindData { get; set; }
 
         //thing to convert given value to 0 if it's 0xFF (empty lap time)
         public static int Normalize(int value)
@@ -82,6 +85,22 @@ namespace SuperVision
             {
                 return false;
             }
+        }
+
+        public static Race getRaceById(int id, List<Race> races)
+        {
+            Race? race = races.FirstOrDefault(r => r.Id == id);
+
+            return race;
+        }
+
+        public static void saveData(string path)
+        {
+            if (path == Globals.jsonPath)
+                File.WriteAllText(Globals.jsonPath, JsonSerializer.Serialize(Globals.AllTimeData, new JsonSerializerOptions { WriteIndented = true }));
+
+            if (path == Globals.grindPath)
+                File.WriteAllText(Globals.grindPath, JsonSerializer.Serialize(Globals.grindData, new JsonSerializerOptions { WriteIndented = true }));
         }
     }
 }

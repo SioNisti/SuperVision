@@ -27,7 +27,7 @@ public partial class SplitsViewModel : WidgetViewModel
 
     public bool _clipBoardLock = false;
 
-    public override void UpdateState(Dictionary<uint, byte[]> data)
+    public async override void UpdateState(Dictionary<uint, byte[]> data)
     {
         if (!data.TryGetValue(0xF50F33, out var lapData)) return;
         data.TryGetValue(0xF50101, out var totaltimeData);
@@ -64,7 +64,7 @@ public partial class SplitsViewModel : WidgetViewModel
         if (lapSplits[4] > 0 && !_clipBoardLock)
         {
             _clipBoardLock = true;
-            CopyToClipboard($"{Globals.CsToStr(lapSplits[0])} {Globals.CsToStr(lapSplits[1])} {Globals.CsToStr(lapSplits[2])} {Globals.CsToStr(lapSplits[3])} {Globals.CsToStr(lapSplits[4])}");
+            await CopyToClipboard($"{Globals.CsToStr(lapSplits[0])} {Globals.CsToStr(lapSplits[1])} {Globals.CsToStr(lapSplits[2])} {Globals.CsToStr(lapSplits[3])} {Globals.CsToStr(lapSplits[4])}");
         }
         else if (lapreached < 6)
         {

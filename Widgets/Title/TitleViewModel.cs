@@ -36,10 +36,7 @@ public partial class TitleViewModel : WidgetViewModel
     {
         if (Globals.validateCourse(course))
         {
-            var json = File.ReadAllText(Globals.jsonPath);
-            var data = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, CourseData>>>(json);
-
-            return $"{data[Globals.currentRegion][course].Finishedraces}/{data[Globals.currentRegion][course].Attempts}";
+            return $"{Globals.AllTimeData[Globals.currentRegion][course].Finishedraces}/{Globals.AllTimeData[Globals.currentRegion][course].Attempts}";
         }
         else
         {

@@ -24,9 +24,6 @@ public partial class GrindAttemptsViewModel : WidgetViewModel
     {
         if (Globals.grindPath == "") return;
 
-        var grindjson = File.ReadAllText(Globals.grindPath);
-        var grinddata = JsonSerializer.Deserialize<GrindData>(grindjson);
-
-        AttemptRatio = $"{grinddata.Finishedraces}/{grinddata.Attempts}";
+        AttemptRatio = $"{Globals.grindData.Finishedraces}/{Globals.grindData.Attempts}";
     }
 }

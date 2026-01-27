@@ -26,9 +26,6 @@ public partial class GrindInfoViewModel : WidgetViewModel
     {
         if (Globals.grindPath == "") return;
 
-        var json = File.ReadAllText(Globals.grindPath);
-        var gdata = JsonSerializer.Deserialize<GrindData>(json);
-
-        GrindInfos = $"{gdata.Course} {gdata.GoalType} {gdata.Region}\nGoal: {Globals.CsToStr(gdata.GoalTime)}";
+        GrindInfos = $"{Globals.grindData.Course} {Globals.grindData.GoalType} {Globals.grindData.Region}\nGoal: {Globals.CsToStr(Globals.grindData.GoalTime)}";
     }
 }

@@ -4,6 +4,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using SuperVision.Services;
 using SuperVision.Views;
 using System;
@@ -29,6 +31,7 @@ namespace SuperVision.ViewModels
             _logic.CheckJson();
             LoadLayout();
 
+            //initialize the sessiondata variable
             foreach (var course in Globals.courses)
             {
                 Globals.sessionData[course] = new SessionData();
@@ -211,7 +214,7 @@ namespace SuperVision.ViewModels
             .ToList();
 
         [RelayCommand]
-        public void AddSelectedWidget()
+        public async void AddSelectedWidget()
         {
             if (SelectedWidgetType == null) return; 
 
@@ -231,22 +234,40 @@ namespace SuperVision.ViewModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error adding widget: {ex.Message}");
+                var box = MessageBoxManager.GetMessageBoxStandard(
+                    "Error",
+                    $"Error adding widget.\n{ex.Message}",
+                    ButtonEnum.Ok,
+                    MsBox.Avalonia.Enums.Icon.Error
+                );
+                await box.ShowAsync();
             }
         }
 
         [RelayCommand]
-        private void SaveLayout()
+        private async void SaveLayout()
         {
-            var settingsList = Widgets.Select(w => new WidgetSettings
+            try
             {
-                Type = w.WidgetType,
-                FontColor = w.FontColor,
-                BgColor = w.BgColor
-            }).ToList();
+                var settingsList = Widgets.Select(w => new WidgetSettings
+                {
+                    Type = w.WidgetType,
+                    FontColor = w.FontColor,
+                    BgColor = w.BgColor
+                }).ToList();
 
-            string json = JsonSerializer.Serialize(settingsList, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(Globals.layoutPath, json);
+                string json = JsonSerializer.Serialize(settingsList, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(Globals.layoutPath, json);
+            } catch (Exception ex)
+            {
+                var box = MessageBoxManager.GetMessageBoxStandard(
+                    "Error",
+                    $"Error saving layout.\n{ex.Message}",
+                    ButtonEnum.Ok,
+                    MsBox.Avalonia.Enums.Icon.Error
+                );
+                await box.ShowAsync();
+            }
         }
     }
 }

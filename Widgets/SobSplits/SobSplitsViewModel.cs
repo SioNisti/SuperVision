@@ -30,9 +30,7 @@ public partial class SobSplitsViewModel : WidgetViewModel
     {
         try
         {
-            var json = File.ReadAllText(Globals.jsonPath);
-            var alltimedata = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, CourseData>>>(json);
-            var courseData = alltimedata[Globals.currentRegion][Globals.currentCourse];
+            var courseData = Globals.AllTimeData[Globals.currentRegion][Globals.currentCourse];
 
             int l1 = courseData.Bestlaps[0] == 0 ? 0 : courseData.Races[courseData.Bestlaps[0] - 1].Laps[0];
             int l2 = courseData.Bestlaps[1] == 0 ? 0 : courseData.Races[courseData.Bestlaps[1] - 1].Laps[1];

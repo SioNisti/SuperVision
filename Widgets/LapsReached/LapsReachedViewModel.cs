@@ -38,9 +38,7 @@ public partial class LapsReachedViewModel : WidgetViewModel
 
     public override void UpdateState(Dictionary<uint, byte[]> data)
     {
-        var json = File.ReadAllText(Globals.jsonPath);
-        var alltimedata = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, CourseData>>>(json);
-        var courseData = alltimedata[Globals.currentRegion][Globals.currentCourse];
+        var courseData = Globals.AllTimeData[Globals.currentRegion][Globals.currentCourse];
 
         var laps = courseData.LapsReached;
 

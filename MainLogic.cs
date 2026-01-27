@@ -38,19 +38,9 @@ namespace SuperVision
 
             if (!File.Exists(Globals.layoutPath))
                 File.WriteAllText(Globals.layoutPath, "[\r\n  { \"Type\": \"Splits\", \"FontColor\": \"white\", \"BgColor\": \"#000000\" }\r\n]");
-
-            Dictionary<string, Dictionary<string, CourseData>> allData;
-
-            if (File.Exists(Globals.jsonPath))
-            {
-                string json = File.ReadAllText(Globals.jsonPath);
-                allData = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, CourseData>>>(json) ?? new Dictionary<string, Dictionary<string, CourseData>>();
-
-            }
-            else
-            {
-                allData = new Dictionary<string, Dictionary<string, CourseData>>();
-            }
+            
+            string fjson = File.ReadAllText(Globals.jsonPath);
+            Globals.AllTimeData = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, CourseData>>>(fjson) ?? new Dictionary<string, Dictionary<string, CourseData>>();
 
             //check that all the courses are in the json. if not, add them.
             bool update = false;
@@ -58,17 +48,17 @@ namespace SuperVision
 
             foreach (string region in regions)
             {
-                if (!allData.ContainsKey(region))
+                if (!Globals.AllTimeData.ContainsKey(region))
                 {
-                    allData[region] = new Dictionary<string, CourseData>();
+                    Globals.AllTimeData[region] = new Dictionary<string, CourseData>();
                     update = true;
                 }
 
                 foreach (var course in Globals.courses)
                 {
-                    if (!allData[region].ContainsKey(course))
+                    if (!Globals.AllTimeData[region].ContainsKey(course))
                     {
-                        allData[region][course] = new CourseData
+                        Globals.AllTimeData[region][course] = new CourseData
                         {
                             Finishedraces = 0,
                             Attempts = 0,
@@ -83,8 +73,7 @@ namespace SuperVision
 
             if (update)
             {
-                string json = JsonSerializer.Serialize(allData, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(Globals.jsonPath, json);
+                Globals.saveData(Globals.jsonPath);
             }
         }
 

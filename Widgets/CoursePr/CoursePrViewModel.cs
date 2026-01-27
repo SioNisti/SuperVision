@@ -24,41 +24,32 @@ public partial class CoursePrViewModel : WidgetViewModel
 
     public override void UpdateState(Dictionary<uint, byte[]> data)
     {
-        CoursePrs = $"PR:\n5lap: {get5lapPrInfo(Globals.currentCourse)}\nFlap: {getFlapPrInfo(Globals.currentCourse)}";
+        CoursePrs = $"PR:\n5lap: {getPrInfo("5lap")}\nFlap: {getPrInfo("flap")}";
     }
-    public string get5lapPrInfo(string course)
+
+    public string getPrInfo(string type)
     {
+        var course = Globals.currentCourse;
+
         if (Globals.validateCourse(course))
         {
-            var json = File.ReadAllText(Globals.jsonPath);
-            var data = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, CourseData>>>(json);
-            var courseData = data[Globals.currentRegion][course];
-            int id = courseData.Pr.Fivelap;
-            Race prRace = courseData.Races.FirstOrDefault(r => r.Id == id);
+            var courseData = Globals.AllTimeData[Globals.currentRegion][course];
+            int id = (type == "flap") ? courseData.Pr.Flap : courseData.Pr.Fivelap;
+            Race prRace = Globals.getRaceById(id, courseData.Races);
 
             if (prRace == null) return "0'00\"00";
 
-            return Globals.CsToStr(prRace.Racetime);
-        }
-        else
-        {
-            return "0'00\"00";
-        }
-    }
-
-    public string getFlapPrInfo(string course)
-    {
-        if (Globals.validateCourse(course))
-        {
-            var json = File.ReadAllText(Globals.jsonPath);
-            var data = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, CourseData>>>(json);
-            var courseData = data[Globals.currentRegion][course];
-            int id = courseData.Pr.Flap;
-            Race prRace = courseData.Races.FirstOrDefault(r => r.Id == id);
-            if (prRace == null) return "0'00\"00";
-            List<int> prLaps = prRace.Laps.ToList();
-
-            return Globals.CsToStr(prLaps.Min());
+            int res = 0;
+            if (type == "flap")
+            {
+                List<int> prLaps = prRace.Laps.ToList();
+                res = prLaps.Min();
+            } else
+            {
+                res = prRace.Racetime;
+            }
+            
+            return Globals.CsToStr(res);
         }
         else
         {

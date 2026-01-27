@@ -29,11 +29,10 @@ public partial class GrindCoursePrViewModel : WidgetViewModel
 
         try
         {
-            var json = File.ReadAllText(Globals.grindPath);
-            var gdata = JsonSerializer.Deserialize<GrindData>(json);
+            var gdata = Globals.grindData;
 
-            string flap = gdata.Pr.Flap > 0 ? Globals.CsToStr(gdata.Races[gdata.Pr.Flap - 1].Laps.Min()) : "0'00\"00";
-            string fivelap = gdata.Pr.Fivelap > 0 ? fivelap = Globals.CsToStr(gdata.Races[gdata.Pr.Fivelap - 1].Racetime) : "0'00\"00";
+            string flap = gdata.Pr.Flap > 0 ? Globals.CsToStr(Globals.getRaceById(gdata.Pr.Flap, gdata.Races).Laps.Min()) : "0'00\"00";
+            string fivelap = gdata.Pr.Fivelap > 0 ? fivelap = Globals.CsToStr(Globals.getRaceById(gdata.Pr.Fivelap, gdata.Races).Racetime) : "0'00\"00";
 
             GrindCoursePrs = $"Grind Bests:\n5lap: {fivelap}\nFlap: {flap}";
         } catch (Exception e)

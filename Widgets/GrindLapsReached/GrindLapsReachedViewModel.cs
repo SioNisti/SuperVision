@@ -39,10 +39,7 @@ public partial class GrindLapsReachedViewModel : WidgetViewModel
     {
         if (Globals.grindPath == "") return;
 
-        var grindjson = File.ReadAllText(Globals.grindPath);
-        var grinddata = JsonSerializer.Deserialize<GrindData>(grindjson);
-
-        var laps = grinddata.LapsReached;
+        var laps = Globals.grindData.LapsReached;
 
         for (int i = 0; i < 5; i++)
         {

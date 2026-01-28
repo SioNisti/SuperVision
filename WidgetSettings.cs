@@ -13,6 +13,7 @@ namespace SuperVision
         public string Type { get; set; } = "Splits";
         public string FontColor { get; set; } = "#FFFFFF";
         public string BgColor { get; set; } = "#00000000";
+        public Dictionary<string, string> Variables { get; set; } = new();
 
         [ObservableProperty]
         [JsonIgnore]

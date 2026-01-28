@@ -1,14 +1,14 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:widget="using:SuperVision.Widgets.SessionAttempts"
-             x:Class="SuperVision.Widgets.SessionAttempts.SessionAttemptsView"
-             x:DataType="widget:SessionAttemptsViewModel"
+             xmlns:widget="using:SuperVision.Widgets.Attempts"
+             x:Class="SuperVision.Widgets.Attempts.AttemptsView"
+             x:DataType="widget:AttemptsViewModel"
              HorizontalAlignment="Stretch">
     
 <Border Background="{Binding BgColor}" Padding="10,5">
         <Grid ColumnDefinitions="Auto, *">
             <TextBlock Grid.Column="0" 
-                       Text="Session:" 
+                       Text="{Binding CourseName}" 
                        Foreground="{Binding FontColor}" 
                        FontSize="22"
                        FontFamily="Courier New"

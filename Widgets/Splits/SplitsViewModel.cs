@@ -2,11 +2,10 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using SuperVision.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace SuperVision.Widgets.Splits;
@@ -15,17 +14,37 @@ public partial class SplitsViewModel : WidgetViewModel
 {
     public override string DisplayName => "Splits";
     public override string WidgetType => "Splits";
+    public SplitsViewModel()
+    {
+        //define setting variable(s)
+        DefineVariable("Show Total", "Bool", "True");
+    }
 
     public override Dictionary<uint, uint> GetRequiredAddresses() => new()
     {
-        { 0xF50F33, 30 }, // Lap times
-        { 0xF50101, 3 }, // total time
-        { 0xF510F9, 1 }, // laps reached
+        { 0xF50F33, 30 }, //lap times
+        { 0xF50101, 3 }, //total time
+        { 0xF510F9, 1 }, //laps reached
     };
 
     [ObservableProperty] private string _raceSplits = "Live:\n   L1 0'00\"00\n   L2 0'00\"00\n   L3 0'00\"00\n   L4 0'00\"00\n   L5 0'00\"00\nTOTAL 0'00\"00";
 
     public bool _clipBoardLock = false;
+    private int[] laps = [0, 0, 0, 0, 0];
+    private string total = Globals.CsToStr(0);
+    public override void RefreshDisplay()
+    {
+        string res = $"Live:\n   L1 {Globals.CsToStr(laps[0])}\n   L2 {Globals.CsToStr(laps[1])}\n   L3 {Globals.CsToStr(laps[2])}\n   L4 {Globals.CsToStr(laps[3])}\n   L5 {Globals.CsToStr(laps[4])}";
+        
+        if (GetBool("Show Total"))
+        {
+            RaceSplits = $"{res}\nTOTAL {total}";
+        } else
+        {
+
+            RaceSplits = res;
+        }
+    }
 
     public async override void UpdateState(Dictionary<uint, byte[]> data)
     {
@@ -54,12 +73,14 @@ public partial class SplitsViewModel : WidgetViewModel
             Math.Max(0, cs5 - cs4)
         };
 
-        if (lapreached < 6 && formatted5 == "0'00\"00")
-        {
-            formatted5 = totalTime;
-        }
+        if (lapreached < 6 && formatted5 == "0'00\"00") formatted5 = totalTime;
 
-        RaceSplits = $"Live:\n   L1 {Globals.CsToStr(lapSplits[0])}\n   L2 {Globals.CsToStr(lapSplits[1])}\n   L3 {Globals.CsToStr(lapSplits[2])}\n   L4 {Globals.CsToStr(lapSplits[3])}\n   L5 {Globals.CsToStr(lapSplits[4])}\nTOTAL {formatted5}";
+        for (int i = 0; i < lapSplits.Length; i++)
+        {
+            laps[i] = lapSplits[i];
+        }
+        
+        total = formatted5;
 
         if (lapSplits[4] > 0 && !_clipBoardLock)
         {
@@ -70,6 +91,8 @@ public partial class SplitsViewModel : WidgetViewModel
         {
             _clipBoardLock = false;
         }
+
+        RefreshDisplay();
     }
     public async Task CopyToClipboard(string text)
     {

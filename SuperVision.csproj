@@ -26,6 +26,33 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaXaml Remove="Widgets\GrindAttempts\**" />
+    <AvaloniaXaml Remove="Widgets\GrindCoursePr\**" />
+    <AvaloniaXaml Remove="Widgets\GrindLapsReached\**" />
+    <AvaloniaXaml Remove="Widgets\SessionAttempts\**" />
+    <AvaloniaXaml Remove="Widgets\SessionCoursePr\**" />
+    <AvaloniaXaml Remove="Widgets\SessionLapsReached\**" />
+    <Compile Remove="Widgets\GrindAttempts\**" />
+    <Compile Remove="Widgets\GrindCoursePr\**" />
+    <Compile Remove="Widgets\GrindLapsReached\**" />
+    <Compile Remove="Widgets\SessionAttempts\**" />
+    <Compile Remove="Widgets\SessionCoursePr\**" />
+    <Compile Remove="Widgets\SessionLapsReached\**" />
+    <EmbeddedResource Remove="Widgets\GrindAttempts\**" />
+    <EmbeddedResource Remove="Widgets\GrindCoursePr\**" />
+    <EmbeddedResource Remove="Widgets\GrindLapsReached\**" />
+    <EmbeddedResource Remove="Widgets\SessionAttempts\**" />
+    <EmbeddedResource Remove="Widgets\SessionCoursePr\**" />
+    <EmbeddedResource Remove="Widgets\SessionLapsReached\**" />
+    <None Remove="Widgets\GrindAttempts\**" />
+    <None Remove="Widgets\GrindCoursePr\**" />
+    <None Remove="Widgets\GrindLapsReached\**" />
+    <None Remove="Widgets\SessionAttempts\**" />
+    <None Remove="Widgets\SessionCoursePr\**" />
+    <None Remove="Widgets\SessionLapsReached\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Assets\icon.ico" />
   </ItemGroup>
 
@@ -54,38 +81,8 @@
     <Compile Update="Widgets\CoursePr\CoursePrView.axaml.cs">
       <DependentUpon>CoursePrView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Widgets\GrindAttempts\GrindAttemptsView.axaml.cs">
-      <DependentUpon>GrindAttemptsView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Widgets\GrindCoursePr\GrindCoursePrView.axaml.cs">
-      <DependentUpon>GrindCoursePrView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Widgets\GrindInfo\GrindInfoView.axaml.cs">
-      <DependentUpon>GrindInfoView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Widgets\GrindLapsReached\GrindLapsReachedView.axaml.cs">
-      <DependentUpon>GrindLapsReachedView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Widgets\LapsReached\LapsReachedView.axaml.cs">
-      <DependentUpon>LapsReachedView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Widgets\SessionAttempts\SessionAttemptsView.axaml.cs">
-      <DependentUpon>SessionAttemptsView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Widgets\SessionCoursePr\SessionCoursePrView.axaml.cs">
-      <DependentUpon>SessionCoursePrView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Widgets\SessionLapsReached\SessionLapsReachedView.axaml.cs">
-      <DependentUpon>SessionLapsReachedView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Widgets\SobSplits\SobSplitsView.axaml.cs">
-      <DependentUpon>SobSplitsView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Widgets\Splits\SplitsView.axaml.cs">
-      <DependentUpon>SplitsView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Widgets\Title\TitleView.axaml.cs">
-      <DependentUpon>TitleView.axaml</DependentUpon>
+    <Compile Update="Widgets\Attempts\AttemptsView.axaml.cs">
+      <DependentUpon>AttemptsView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

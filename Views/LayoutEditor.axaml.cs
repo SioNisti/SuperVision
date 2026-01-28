@@ -1,10 +1,6 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using SuperVision.ViewModels;
-using System.Collections.Specialized;
 
 namespace SuperVision.Views
 {

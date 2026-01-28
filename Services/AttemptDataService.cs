@@ -1,6 +1,6 @@
 ﻿using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
-using SuperVision.Widgets.LapsReached;
+//using SuperVision.Widgets.LapsReached;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -29,7 +29,7 @@ namespace SuperVision.Services
             { 0xF50124, 1 }   //current course
         };
 
-        public async void UpdateState(Dictionary<uint, byte[]> data)
+        public void UpdateState(Dictionary<uint, byte[]> data)
         {
             //grab the data
             if (!data.TryGetValue(0xF50F33, out var lapData)) return;
@@ -68,10 +68,13 @@ namespace SuperVision.Services
             //check if the course is good (basically not a battle course)
             if (!Globals.validateCourse(Globals.currentCourse)) return;
 
+            //check that youre in tt
+            if (gameMode != 0x04) return;
+
             var session = Globals.sessionData[Globals.currentCourse];
 
             bool raceFinished = lapSplits[4] > 0 && lapReached == 6;
-            bool shouldSave = gameMode == 0x04 && screenMode == 0x02 && (pauseMode == 0x03 || raceFinished);
+            bool shouldSave = screenMode == 0x02 && (pauseMode == 0x03 || raceFinished);
 
             try
             {
@@ -121,11 +124,12 @@ namespace SuperVision.Services
                         if (grindData.EndDate != null) Globals.isGrinding = false;
                     }
                 }
-                else if (gameMode == 0x04 && screenMode == 0x02 && pauseMode == 0x00 && lapReached != 6 && _jsonLock)
+                else if (screenMode == 0x02 && pauseMode == 0x00 && lapReached != 6 && _jsonLock)
                 {
                     _jsonLock = false;
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex);
                 /* crashes
@@ -137,8 +141,8 @@ namespace SuperVision.Services
                 );
                 await box.ShowAsync();*/
             }
-            
 
+            if (_jsonLock) return;
             //constantly updates the best flap for the course
             if (lapSplits.Where(l => l > 0).ToList().Any())
             {
@@ -158,7 +162,8 @@ namespace SuperVision.Services
                     session.LapsReached[lapReached - 1]++;
                     _lastCountedLap = lapReached;
                 }
-            } else
+            }
+            else
             {
                 _lastCountedLap = 0;
             }
@@ -166,7 +171,6 @@ namespace SuperVision.Services
 
         private void UpdateRaceStats(IRaceTracker data, string character, int racetime, int[] laps, int lapreached)
         {
-            Debug.WriteLine(data);
             data.Attempts++;
             int raceId = data.Attempts;
 
@@ -181,7 +185,7 @@ namespace SuperVision.Services
 
             //if race finished, set lapreached to 5
             if (lapreached == 6) lapreached--;
-            Debug.WriteLine(lapreached);
+
             //loop through all laps finished
             for (int i = 0; i < lapreached; i++)
             {

@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SuperVision.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,30 @@ public partial class GrindInfoViewModel : WidgetViewModel
     }
 
     [ObservableProperty] private string _grindInfos = $"Grind Status\nInactive";
+    private string _course = "MC3";
+    private string _type = "5lap";
+    private string _region = "NTSC";
+    private int _goal = 0;
+    public override void RefreshDisplay()
+    {
+        if (!Globals.isGrinding)
+        {
+            GrindInfos = "Grind Status\nInactive";
+        } else
+        {
+            GrindInfos = $"{_course} {_type} {_region}\nGoal: {Globals.CsToStr(_goal)}";
+        }
+    }
 
     public override void UpdateState(Dictionary<uint, byte[]> data)
     {
-        if (Globals.grindPath == "" || Globals.grindData == null) return;
+        if (!Globals.isGrinding) return;
 
-        GrindInfos = $"{Globals.grindData.Course} {Globals.grindData.GoalType} {Globals.grindData.Region}\nGoal: {Globals.CsToStr(Globals.grindData.GoalTime)}";
+        _course = Globals.grindData.Course;
+        _type = Globals.grindData.GoalType;
+        _region = Globals.grindData.Region;
+        _goal = Globals.grindData.GoalTime;
+
+        RefreshDisplay();
     }
 }

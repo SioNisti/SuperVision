@@ -2,11 +2,7 @@
 using SuperVision.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text.Json;
 
 namespace SuperVision.Widgets.CoursePr;
 
@@ -14,20 +10,55 @@ public partial class CoursePrViewModel : WidgetViewModel
 {
     public override string DisplayName => "Course PRs";
     public override string WidgetType => "CoursePr";
+    public CoursePrViewModel()
+    {
+        //define setting variable(s)
+        DefineVariable("Comparison", "Combo", "All Time", new List<string> { "All Time", "Session", "Grind" });
+        DefineVariable("Prefix", "Text", "PR");
+    }
 
     public override Dictionary<uint, uint> GetRequiredAddresses()
     {
         return new Dictionary<uint, uint>(); //doesnt read memory
     }
 
-    [ObservableProperty] private string _coursePrs = $"PR:\n5lap: 0'00\"00\nFlap: 0'00\"00";
+    [ObservableProperty] private string _coursePrs = "";
 
+    public override void RefreshDisplay()
+    {
+        string comparison = GetVar("Comparison");
+        string prefix = GetVar("Prefix");
+        CoursePrs = $"{prefix}:\n5lap: {getPrInfo("5lap", comparison)}\nFlap: {getPrInfo("flap", comparison)}";
+    }
     public override void UpdateState(Dictionary<uint, byte[]> data)
     {
-        CoursePrs = $"PR:\n5lap: {getPrInfo("5lap")}\nFlap: {getPrInfo("flap")}";
+        RefreshDisplay();
+    }
+    public string getPrInfo(string type, string comparison)
+    {
+        switch (comparison)
+        {
+            case "All Time":
+                return getAT(type);
+
+            case "Session":
+                if (type == "flap")
+                {
+                    return Globals.CsToStr(Globals.sessionData[Globals.currentCourse].Flap);
+                } else
+                {
+                    return Globals.CsToStr(Globals.sessionData[Globals.currentCourse].FiveLap);
+                }
+
+            case "Grind":
+                return getGrind(type);
+
+            default:
+                return getAT(type);
+        }
     }
 
-    public string getPrInfo(string type)
+    public string getAT(string type)
     {
         var course = Globals.currentCourse;
 
@@ -44,16 +75,31 @@ public partial class CoursePrViewModel : WidgetViewModel
             {
                 List<int> prLaps = prRace.Laps.ToList();
                 res = prLaps.Min();
-            } else
+            }
+            else
             {
                 res = prRace.Racetime;
             }
-            
+
             return Globals.CsToStr(res);
         }
         else
         {
             return "0'00\"00";
+        }
+    }
+
+    public string getGrind(string type)
+    {
+        if (Globals.grindPath == "" || Globals.grindData == null) return Globals.CsToStr(0);
+        var gdata = Globals.grindData;
+
+        if (type == "flap")
+        {
+            return gdata.Pr.Flap > 0 ? Globals.CsToStr(Globals.getRaceById(gdata.Pr.Flap, gdata.Races).Laps.Min()) : "0'00\"00";
+        } else
+        {
+            return gdata.Pr.Fivelap > 0 ? Globals.CsToStr(Globals.getRaceById(gdata.Pr.Fivelap, gdata.Races).Racetime) : "0'00\"00";
         }
     }
 }

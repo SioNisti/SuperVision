@@ -26,16 +26,12 @@ namespace SuperVision.ViewModels
 
         public MainWindowViewModel()
         {
+            //initialize the sessiondata variable
+            foreach (var course in Globals.courses) { Globals.sessionData[course] = new SessionData(); }
 
             _logic = new MainLogic();
             _logic.CheckJson();
             LoadLayout();
-
-            //initialize the sessiondata variable
-            foreach (var course in Globals.courses)
-            {
-                Globals.sessionData[course] = new SessionData();
-            }
 
             //add the "logger" to the program. this is the thing that saves the data.json
             var logger = new AttemptDataService();
@@ -67,8 +63,7 @@ namespace SuperVision.ViewModels
                 {
                     var widget = (WidgetViewModel)Activator.CreateInstance(match)!;
 
-                    widget.BgColor = item.BgColor;
-                    widget.FontColor = item.FontColor;
+                    widget.ApplySettings(item);
 
                     Widgets.Add(widget);
                     _logic.ActiveWidgets.Add(widget);
@@ -88,7 +83,7 @@ namespace SuperVision.ViewModels
 
         //[RelayCommand]
         [RelayCommand(CanExecute = nameof(CanConnect))]
-        private async void Connect()
+        private async Task Connect()
         {
             try
             {
@@ -239,6 +234,8 @@ namespace SuperVision.ViewModels
                 newWidget.BgColor = "black";
                 newWidget.FontColor = "white";
 
+                newWidget.RefreshDisplay();
+
                 Widgets.Add(newWidget);
                 _logic.ActiveWidgets.Add(newWidget);
 
@@ -265,7 +262,8 @@ namespace SuperVision.ViewModels
                 {
                     Type = w.WidgetType,
                     FontColor = w.FontColor,
-                    BgColor = w.BgColor
+                    BgColor = w.BgColor,
+                    Variables = w.Variables.ToDictionary(v => v.Name, v => v.Value)
                 }).ToList();
 
                 string json = JsonSerializer.Serialize(settingsList, new JsonSerializerOptions { WriteIndented = true });

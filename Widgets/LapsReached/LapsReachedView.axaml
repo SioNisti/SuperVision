@@ -7,7 +7,12 @@
 
     <Border Background="{Binding BgColor}" Padding="10,5">
         <StackPanel>
-            <TextBlock FontSize="22" FontFamily="Courier New" HorizontalAlignment="Left">All Time:</TextBlock>
+            <TextBlock
+                FontSize="22"
+                FontFamily="Courier New"
+                HorizontalAlignment="Left"
+                Text="{Binding PrefixString}"
+                Foreground="{Binding FontColor}" />
             
             <ItemsControl ItemsSource="{Binding LapRows}" Foreground="{Binding FontColor}"> 
                 <ItemsControl.ItemTemplate>

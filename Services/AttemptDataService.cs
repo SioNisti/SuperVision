@@ -105,13 +105,13 @@ namespace SuperVision.Services
 
                         if (grindData.GoalType == "Flap")
                         {
-                            int flap = lapSplits.Where(l => l > 0).ToList().Min();
-                            if (flap < grindData.GoalTime)
+                            int flap = lapReached > 1 ? lapSplits.Where(l => l > 0).ToList().Min() : 0;
+                            if (flap <= grindData.GoalTime && flap != 0)
                             {
                                 grindData.EndDate = DateTime.Now;
                             }
                         }
-                        if (grindData.GoalType == "5lap" && lapSplits[4] > 0 && finishTime < grindData.GoalTime)
+                        if (grindData.GoalType == "5lap" && lapSplits[4] > 0 && finishTime <= grindData.GoalTime)
                         {
                             grindData.EndDate = DateTime.Now;
                         }
@@ -127,13 +127,15 @@ namespace SuperVision.Services
                 }
             } catch (Exception ex)
             {
+                Debug.WriteLine(ex);
+                /* crashes
                 var box = MessageBoxManager.GetMessageBoxStandard(
                     "Error",
                     $"Error saving the race.\n{ex}",
                     ButtonEnum.Ok,
                     MsBox.Avalonia.Enums.Icon.Error
                 );
-                await box.ShowAsync();
+                await box.ShowAsync();*/
             }
             
 
@@ -164,6 +166,7 @@ namespace SuperVision.Services
 
         private void UpdateRaceStats(IRaceTracker data, string character, int racetime, int[] laps, int lapreached)
         {
+            Debug.WriteLine(data);
             data.Attempts++;
             int raceId = data.Attempts;
 
@@ -178,6 +181,7 @@ namespace SuperVision.Services
 
             //if race finished, set lapreached to 5
             if (lapreached == 6) lapreached--;
+            Debug.WriteLine(lapreached);
             //loop through all laps finished
             for (int i = 0; i < lapreached; i++)
             {

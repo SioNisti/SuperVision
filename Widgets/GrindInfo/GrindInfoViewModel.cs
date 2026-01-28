@@ -25,6 +25,7 @@ public partial class GrindInfoViewModel : WidgetViewModel
     public override void UpdateState(Dictionary<uint, byte[]> data)
     {
         if (Globals.grindPath == "") return;
+        if (Globals.grindData == null) return; //borke?
 
         GrindInfos = $"{Globals.grindData.Course} {Globals.grindData.GoalType} {Globals.grindData.Region}\nGoal: {Globals.CsToStr(Globals.grindData.GoalTime)}";
     }

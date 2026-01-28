@@ -9,7 +9,7 @@
 	<PublishSingleFile>true</PublishSingleFile>
 	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 	  
-	<Version>2.2.0</Version>
+	<Version>2.2.1</Version>
 	<Authors>SioN</Authors>
 	<Company>sionTea</Company>
 	<Copyright>sionTea</Copyright>
@@ -17,7 +17,7 @@
 	<Description>Reads the memory of Super Mario Kart with SD2SNES.</Description>
 
 	<AssemblyTitle>SuperVision</AssemblyTitle>
-	<FileVersion>2.2.0</FileVersion>
+	<FileVersion>2.2.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

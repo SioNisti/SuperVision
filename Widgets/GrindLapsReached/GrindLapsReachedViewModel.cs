@@ -37,7 +37,7 @@ public partial class GrindLapsReachedViewModel : WidgetViewModel
 
     public override void UpdateState(Dictionary<uint, byte[]> data)
     {
-        if (Globals.grindPath == "") return;
+        if (Globals.grindPath == "" || Globals.grindData == null) return;
 
         var laps = Globals.grindData.LapsReached;
 

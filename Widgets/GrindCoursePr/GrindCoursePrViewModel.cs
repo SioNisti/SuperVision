@@ -25,7 +25,7 @@ public partial class GrindCoursePrViewModel : WidgetViewModel
 
     public override void UpdateState(Dictionary<uint, byte[]> data)
     {
-        if (Globals.grindPath == "") return;
+        if (Globals.grindPath == "" || Globals.grindData == null) return;
 
         try
         {

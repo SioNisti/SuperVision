@@ -28,22 +28,18 @@ public partial class SobSplitsViewModel : WidgetViewModel
 
     public override void UpdateState(Dictionary<uint, byte[]> data)
     {
-        try
-        {
-            var courseData = Globals.AllTimeData[Globals.currentRegion][Globals.currentCourse];
+        if (!Globals.validateCourse(Globals.currentCourse)) return;
 
-            int l1 = courseData.Bestlaps[0] == 0 ? 0 : courseData.Races[courseData.Bestlaps[0] - 1].Laps[0];
-            int l2 = courseData.Bestlaps[1] == 0 ? 0 : courseData.Races[courseData.Bestlaps[1] - 1].Laps[1];
-            int l3 = courseData.Bestlaps[2] == 0 ? 0 : courseData.Races[courseData.Bestlaps[2] - 1].Laps[2];
-            int l4 = courseData.Bestlaps[3] == 0 ? 0 : courseData.Races[courseData.Bestlaps[3] - 1].Laps[3];
-            int l5 = courseData.Bestlaps[4] == 0 ? 0 : courseData.Races[courseData.Bestlaps[4] - 1].Laps[4];
+        var courseData = Globals.AllTimeData[Globals.currentRegion][Globals.currentCourse];
 
-            int total = l1 + l2 + l3 + l4 + l5;
+        int l1 = courseData.Bestlaps[0] == 0 ? 0 : courseData.Races[courseData.Bestlaps[0] - 1].Laps[0];
+        int l2 = courseData.Bestlaps[1] == 0 ? 0 : courseData.Races[courseData.Bestlaps[1] - 1].Laps[1];
+        int l3 = courseData.Bestlaps[2] == 0 ? 0 : courseData.Races[courseData.Bestlaps[2] - 1].Laps[2];
+        int l4 = courseData.Bestlaps[3] == 0 ? 0 : courseData.Races[courseData.Bestlaps[3] - 1].Laps[3];
+        int l5 = courseData.Bestlaps[4] == 0 ? 0 : courseData.Races[courseData.Bestlaps[4] - 1].Laps[4];
 
-            SobTimeSplits = $"SoB:\n   L1 {Globals.CsToStr(l1)}\n   L2 {Globals.CsToStr(l2)}\n   L3 {Globals.CsToStr(l3)}\n   L4 {Globals.CsToStr(l4)}\n   L5 {Globals.CsToStr(l5)}\nTOTAL {Globals.CsToStr(total)}";
-        } catch (Exception ex)
-        {
-            Debug.WriteLine($"{ex.Message}");
-        }
+        int total = l1 + l2 + l3 + l4 + l5;
+
+        SobTimeSplits = $"SoB:\n   L1 {Globals.CsToStr(l1)}\n   L2 {Globals.CsToStr(l2)}\n   L3 {Globals.CsToStr(l3)}\n   L4 {Globals.CsToStr(l4)}\n   L5 {Globals.CsToStr(l5)}\nTOTAL {Globals.CsToStr(total)}";
     }
 }

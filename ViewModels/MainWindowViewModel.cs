@@ -88,34 +88,46 @@ namespace SuperVision.ViewModels
 
         //[RelayCommand]
         [RelayCommand(CanExecute = nameof(CanConnect))]
-        private void Connect()
+        private async void Connect()
         {
-            _logic.Snessocket = new Snessocket();
-            _logic.Snessocket.wsConnect();
-
-            var socket = _logic.Snessocket;
-
-            if (socket != null && socket.Connected() && !_logic.isAttached)
+            try
             {
-                string[] devices = socket.GetDevices();
+                _logic.Snessocket = new Snessocket();
+                _logic.Snessocket.wsConnect();
 
-                if (devices.Length > 0)
+                var socket = _logic.Snessocket;
+
+                if (socket != null && socket.Connected() && !_logic.isAttached)
                 {
-                    socket.Attach(devices[0]);
-                    socket.Name("SuperVision");
+                    string[] devices = socket.GetDevices();
 
-                    string[] infos = socket.GetInfo();
-                    foreach (string info in infos)
+                    if (devices.Length > 0)
                     {
-                        Debug.WriteLine(info);
-                    }
+                        socket.Attach(devices[0]);
+                        socket.Name("SuperVision");
 
-                    if (infos.Length > 0)
-                    {
-                        _logic.isAttached = true;
-                        ConnectCommand.NotifyCanExecuteChanged();
+                        string[] infos = socket.GetInfo();
+                        foreach (string info in infos)
+                        {
+                            Debug.WriteLine(info);
+                        }
+
+                        if (infos.Length > 0)
+                        {
+                            _logic.isAttached = true;
+                            ConnectCommand.NotifyCanExecuteChanged();
+                        }
                     }
                 }
+            } catch (TaskCanceledException ex)
+            {
+                var box = MessageBoxManager.GetMessageBoxStandard(
+                    "Error",
+                    $"QUSB2SNES Connection Error.",
+                    ButtonEnum.Ok,
+                    MsBox.Avalonia.Enums.Icon.Error
+                );
+                await box.ShowAsync();
             }
         }
         private bool CanConnect()

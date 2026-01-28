@@ -10,16 +10,10 @@ namespace SuperVision.Views
         {
             InitializeComponent();
         }
-
-        public LayoutEditor(MainWindowViewModel vm)
+        public LayoutEditor(LayoutEditorViewModel vm)
         {
             InitializeComponent();
             this.DataContext = vm;
-        }
-        private void AddButton_Click(object sender, RoutedEventArgs e)
-        {
-            var button = (Button)sender;
-            button.ContextMenu?.Open(button);
         }
     }
 }

@@ -3,7 +3,7 @@
         xmlns:vm="using:SuperVision.ViewModels"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         x:Class="SuperVision.Views.LayoutEditor"
-        x:DataType="vm:MainWindowViewModel"
+        x:DataType="vm:LayoutEditorViewModel"
         Title="Layout Editor"
         Icon="/Assets/icon.ico"
         SizeToContent="Width"
@@ -18,10 +18,10 @@
                         <DataTemplate x:DataType="vm:WidgetViewModel">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
                                 <Button Content="▲" 
-                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).MoveWidgetUpCommand}"
+                                        Command="{Binding $parent[Window].((vm:LayoutEditorViewModel)DataContext).MoveWidgetUpCommand}"
                                         CommandParameter="{Binding}"/>
                                 <Button Content="▼" 
-                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).MoveWidgetDownCommand}"
+                                        Command="{Binding $parent[Window].((vm:LayoutEditorViewModel)DataContext).MoveWidgetDownCommand}"
                                         CommandParameter="{Binding}"/>
                             </StackPanel>
                         </DataTemplate>
@@ -32,12 +32,18 @@
                 <DataGridTextColumn Header="Font" FontSize="14" x:DataType="vm:WidgetViewModel" Binding="{Binding FontColor}" />
                 <DataGridTextColumn Header="BG" FontSize="14" x:DataType="vm:WidgetViewModel" Binding="{Binding BgColor}" />
             
-                <DataGridTemplateColumn Header="Remove" Width="auto">
+                <DataGridTemplateColumn Header="Alter" Width="auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="vm:WidgetViewModel">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
+                                <Button Content="Edit" 
+                                        HorizontalAlignment="Center"
+                                        Command="{Binding $parent[Window].((vm:LayoutEditorViewModel)DataContext).EditWidgetCommand}"
+                                        CommandParameter="{Binding}"/>
                                 <Button Content="X" 
-                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).RemoveWidgetCommand}"
+                                        HorizontalAlignment="Center"
+                                        Background="Crimson"
+                                        Command="{Binding $parent[Window].((vm:LayoutEditorViewModel)DataContext).RemoveWidgetCommand}"
                                         CommandParameter="{Binding}"/>
                             </StackPanel>
                         </DataTemplate>
@@ -54,7 +60,7 @@
                       HorizontalAlignment="Stretch"
                       Margin="0,0,10,0">
                 <ComboBox.ItemTemplate>
-                    <DataTemplate x:DataType="vm:MainWindowViewModel+WidgetTypeLookup">
+                    <DataTemplate x:DataType="vm:LayoutEditorViewModel+WidgetTypeLookup">
                         <TextBlock Text="{Binding Name}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>

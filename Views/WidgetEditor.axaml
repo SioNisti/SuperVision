@@ -1,0 +1,51 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:SuperVision"
+        xmlns:vm="using:SuperVision.ViewModels"
+        x:Class="SuperVision.Views.WidgetEditor"
+        x:DataType="vm:WidgetViewModel"
+        Title="Edit Widget" Width="350" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner" CanResize="False">
+
+    <Window.Resources>
+        <local:VarTypeToBooleanConverter x:Key="TypeConverter"/>
+        <local:StringBoolConverter x:Key="BoolConverter"/>
+    </Window.Resources>
+
+    <ScrollViewer>
+        <StackPanel Margin="20" Spacing="15">
+            
+            <TextBlock Text="{Binding DisplayName, StringFormat='Editing {0}'}" 
+                       FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <Separator/>
+
+            <TextBlock Text="Settings" FontWeight="Bold"/>
+            
+            <ItemsControl ItemsSource="{Binding Variables}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="local:WidgetVariable">
+                        <StackPanel Margin="0,0,0,10">
+                            
+                            <TextBlock Text="{Binding Name}" Margin="0,0,0,3"/>
+
+                            <TextBox Text="{Binding Value}" 
+                                     IsVisible="{Binding VarType, Converter={StaticResource TypeConverter}, ConverterParameter='Text'}"/>
+
+                            <ComboBox ItemsSource="{Binding Options}" 
+                                      SelectedItem="{Binding Value}"
+                                      HorizontalAlignment="Stretch"
+                                      IsVisible="{Binding VarType, Converter={StaticResource TypeConverter}, ConverterParameter='Combo'}"/>
+
+                            <CheckBox IsChecked="{Binding Value, Converter={StaticResource BoolConverter}}"
+                                      Content="Enabled"
+                                      IsVisible="{Binding VarType, Converter={StaticResource TypeConverter}, ConverterParameter='Bool'}"/>
+                            
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Button Content="Done" HorizontalAlignment="Right" Click="Close_Click"/>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

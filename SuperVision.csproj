@@ -72,6 +72,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\WidgetEditor.axaml.cs">
+      <DependentUpon>WidgetEditor.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\GrindEditor.axaml.cs">
       <DependentUpon>GrindEditor.axaml</DependentUpon>
     </Compile>

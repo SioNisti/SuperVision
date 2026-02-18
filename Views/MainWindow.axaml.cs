@@ -1,5 +1,12 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Media;
+using Avalonia.Reactive;
+using Avalonia.Threading;
+using System;
 
 namespace SuperVision.Views
 {

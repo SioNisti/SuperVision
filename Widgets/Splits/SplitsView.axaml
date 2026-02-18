@@ -1,14 +1,46 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:SuperVision"
              xmlns:widget="using:SuperVision.Widgets.Splits"
              x:Class="SuperVision.Widgets.Splits.SplitsView"
              x:DataType="widget:SplitsViewModel"
              HorizontalAlignment="Stretch">
 
-    <Border Background="{Binding BgColor}" Padding="10,5">
-        <TextBlock Text="{Binding RaceSplits}" 
-                   Foreground="{Binding FontColor}" 
-                   FontSize="22"
-                   FontFamily="Courier New"/>
+    <UserControl.Resources>
+        <local:ColorToBrushConverter x:Key="ColorToBrush"/>
+    </UserControl.Resources>
+
+    <Border Background="{Binding BgColor, Converter={StaticResource ColorToBrush}}" Padding="10,5">
+        <StackPanel>
+            <TextBlock
+                Foreground="{Binding FontColor, Converter={StaticResource ColorToBrush}}" 
+                FontSize="{Binding FontSize}"
+                FontFamily="{Binding FontName}"
+                HorizontalAlignment="Left"
+                Text="{Binding PrefixString}" />
+            
+            <ItemsControl ItemsSource="{Binding LapRows}" Foreground="{Binding FontColor, Converter={StaticResource ColorToBrush}}"> 
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="Auto, *">
+                    
+                            <TextBlock Grid.Column="0" 
+                                       Text="{Binding Label}" 
+                                       Foreground="{Binding $parent[UserControl].((widget:SplitsViewModel)DataContext).FontColor, Converter={StaticResource ColorToBrush}}" 
+                                       FontSize="{Binding $parent[UserControl].((widget:SplitsViewModel)DataContext).FontSize}"
+                                       FontFamily="{Binding $parent[UserControl].((widget:SplitsViewModel)DataContext).FontName}"
+                                       HorizontalAlignment="Left"/>
+
+                            <TextBlock Grid.Column="1" 
+                                       Text="{Binding Value}" 
+                                       Foreground="{Binding $parent[UserControl].((widget:SplitsViewModel)DataContext).FontColor, Converter={StaticResource ColorToBrush}}" 
+                                       FontSize="{Binding $parent[UserControl].((widget:SplitsViewModel)DataContext).FontSize}"
+                                       FontFamily="{Binding $parent[UserControl].((widget:SplitsViewModel)DataContext).FontName}"
+                                       HorizontalAlignment="Right"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
     </Border>
 </UserControl>

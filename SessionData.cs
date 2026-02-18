@@ -8,12 +8,13 @@ using System.Text.Json.Serialization;
 
 namespace SuperVision
 {
-    public class SessionData
+    public class SessionData : IRaceTracker
     {
-        public int FiveLap { get; set; } = 0;
-        public int Flap { get; set; } = 0;
-        public int Attempts { get; set; } = 0;
-        public int FinishedRaces { get; set; } = 0;
-        public List<int> LapsReached { get; set; } = new List<int>([0,0,0,0,0]);
+        public int Finishedraces { get; set; }
+        public int Attempts { get; set; }
+        public PersonalRecords Pr { get; set; } = new();
+        public int[] Bestlaps { get; set; } = [0, 0, 0, 0, 0];
+        public int[] LapsReached { get; set; } = [0, 0, 0, 0, 0];
+        public List<Race> Races { get; set; } = new();
     }
 }

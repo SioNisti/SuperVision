@@ -1,14 +1,51 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:SuperVision"
              xmlns:widget="using:SuperVision.Widgets.CoursePr"
              x:Class="SuperVision.Widgets.CoursePr.CoursePrView"
              x:DataType="widget:CoursePrViewModel"
              HorizontalAlignment="Stretch">
-    
-    <Border Background="{Binding BgColor}" Padding="10,5">
-        <TextBlock Text="{Binding CoursePrs}" 
-                   Foreground="{Binding FontColor}" 
-                   FontSize="22"
-                   FontFamily="Courier New"/>
+
+    <UserControl.Resources>
+        <local:ColorToBrushConverter x:Key="ColorToBrush"/>
+    </UserControl.Resources>
+
+    <Border Background="{Binding BgColor, Converter={StaticResource ColorToBrush}}" Padding="10,5">
+        <StackPanel>
+            <TextBlock
+                Text="{Binding LabelPrefix}" 
+                Foreground="{Binding FontColor, Converter={StaticResource ColorToBrush}}" 
+                FontSize="{Binding FontSize}"
+                FontFamily="{Binding FontName}"
+                HorizontalAlignment="Left"/>
+
+            <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto">
+                <TextBlock Grid.Column="0" Grid.Row="1"
+                           Text="5lap:" 
+                           Foreground="{Binding FontColor, Converter={StaticResource ColorToBrush}}" 
+                           FontSize="{Binding FontSize}"
+                           FontFamily="{Binding FontName}"
+                           HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="1" Grid.Row="1"
+                           Text="{Binding Course5lap}" 
+                           Foreground="{Binding FontColor, Converter={StaticResource ColorToBrush}}" 
+                           FontSize="{Binding FontSize}"
+                           FontFamily="{Binding FontName}"
+                           HorizontalAlignment="Right"/>
+
+                <TextBlock Grid.Column="0" Grid.Row="2"
+                           Text="Flap:" 
+                           Foreground="{Binding FontColor, Converter={StaticResource ColorToBrush}}" 
+                           FontSize="{Binding FontSize}"
+                           FontFamily="{Binding FontName}"
+                           HorizontalAlignment="Left"/>
+                <TextBlock Grid.Column="1" Grid.Row="2"
+                           Text="{Binding CourseFlap}" 
+                           Foreground="{Binding FontColor, Converter={StaticResource ColorToBrush}}" 
+                           FontSize="{Binding FontSize}"
+                           FontFamily="{Binding FontName}"
+                           HorizontalAlignment="Right"/>
+            </Grid>
+        </StackPanel>
     </Border>
 </UserControl>

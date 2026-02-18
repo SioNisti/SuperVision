@@ -7,8 +7,8 @@ using CommunityToolkit.Mvvm.Input;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using SuperVision.Services;
-using SuperVision.Views;
 using SuperVision.ViewModels;
+using SuperVision.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -163,14 +164,56 @@ namespace SuperVision.ViewModels
         }
 
         [RelayCommand]
-        private void OpenSaveDir()
+        private async void OpenSaveDir()
         {
-            Process.Start(new ProcessStartInfo
+            try
             {
-                FileName = Globals.folder,
-                UseShellExecute = true,
-                Verb = "open"
-            });
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = Globals.folder,
+                        UseShellExecute = true,
+                        Verb = "open"
+                    });
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Process.Start("xdg-open", Globals.folder);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    Process.Start("open", Globals.folder);
+                }
+            }
+            catch (Exception ex)
+            {
+                var box = MessageBoxManager.GetMessageBoxStandard(
+                    "Error",
+                    $"Error opening directory.\n{ex.Message}",
+                    ButtonEnum.Ok,
+                    MsBox.Avalonia.Enums.Icon.Error
+                );
+                await box.ShowAsync();
+            }
+        }
+
+        [RelayCommand]
+        private void SetAllTime()
+        {
+            Globals.currentComparison = "All Time";
+        }
+
+        [RelayCommand]
+        private void SetSession()
+        {
+            Globals.currentComparison = "Session";
+        }
+
+        [RelayCommand]
+        private void SetGrind()
+        {
+            Globals.currentComparison = "Grind";
         }
     }
 }

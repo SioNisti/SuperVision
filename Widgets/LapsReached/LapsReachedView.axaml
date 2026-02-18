@@ -1,18 +1,23 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:SuperVision"
              xmlns:widget="using:SuperVision.Widgets.LapsReached"
              x:Class="SuperVision.Widgets.LapsReached.LapsReachedView"
              x:DataType="widget:LapsReachedViewModel"
              HorizontalAlignment="Stretch">
 
-    <Border Background="{Binding BgColor}" Padding="10,5">
+    <UserControl.Resources>
+        <local:ColorToBrushConverter x:Key="ColorToBrush"/>
+    </UserControl.Resources>
+
+    <Border Background="{Binding BgColor, Converter={StaticResource ColorToBrush}}" Padding="10,5">
         <StackPanel>
             <TextBlock
-                FontSize="22"
-                FontFamily="Courier New"
+                Foreground="{Binding FontColor, Converter={StaticResource ColorToBrush}}" 
+                FontSize="{Binding FontSize}"
+                FontFamily="{Binding FontName}"
                 HorizontalAlignment="Left"
-                Text="{Binding PrefixString}"
-                Foreground="{Binding FontColor}" />
+                Text="{Binding PrefixString}" />
             
             <ItemsControl ItemsSource="{Binding LapRows}" Foreground="{Binding FontColor}"> 
                 <ItemsControl.ItemTemplate>
@@ -21,14 +26,16 @@
                     
                             <TextBlock Grid.Column="0" 
                                        Text="{Binding Label}" 
-                                       FontSize="22"
-                                       FontFamily="Courier New"
+                                       Foreground="{Binding $parent[UserControl].((widget:LapsReachedViewModel)DataContext).FontColor, Converter={StaticResource ColorToBrush}}" 
+                                       FontSize="{Binding $parent[UserControl].((widget:LapsReachedViewModel)DataContext).FontSize}"
+                                       FontFamily="{Binding $parent[UserControl].((widget:LapsReachedViewModel)DataContext).FontName}"
                                        HorizontalAlignment="Left"/>
 
                             <TextBlock Grid.Column="1" 
                                        Text="{Binding Value}" 
-                                       FontSize="22"
-                                       FontFamily="Courier New"
+                                       Foreground="{Binding $parent[UserControl].((widget:LapsReachedViewModel)DataContext).FontColor, Converter={StaticResource ColorToBrush}}" 
+                                       FontSize="{Binding $parent[UserControl].((widget:LapsReachedViewModel)DataContext).FontSize}"
+                                       FontFamily="{Binding $parent[UserControl].((widget:LapsReachedViewModel)DataContext).FontName}"
                                        HorizontalAlignment="Right"/>
                         </Grid>
                     </DataTemplate>

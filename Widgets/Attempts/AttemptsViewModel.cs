@@ -13,8 +13,8 @@ public partial class AttemptsViewModel : WidgetViewModel
     public AttemptsViewModel()
     {
         //define setting variable(s)
-        DefineVariable("Comparison", "Combo", "All Time", new List<string> { "All Time", "Session", "Grind" });
-        DefineVariable("Prefix", "Text", "Tries");
+        DefineVariable("Comparison", "Combo", "Current Comparison", new List<string> { "Current Comparison", "All Time", "Session", "Grind" });
+        DefineVariable("Prefix", "Text", "{course}");
     }
 
     public override Dictionary<uint, uint> GetRequiredAddresses()
@@ -31,12 +31,18 @@ public partial class AttemptsViewModel : WidgetViewModel
     public override void RefreshDisplay()
     {
         string prefix = GetVar("Prefix");
-        CourseName = $"{prefix}:";
+        prefix = Globals.handlePrefix(prefix, false);
+
+        CourseName = $"{prefix}";
         AttemptRatio = $"{_finishes}/{_attempts}";
     }
     public override void UpdateState(Dictionary<uint, byte[]> data)
     {
+        if (!Globals.validateCourse(Globals.currentCourse)) return;
+
         string comparison = GetVar("Comparison");
+        if (comparison == "Current Comparison") comparison = Globals.currentComparison;
+
         switch (comparison)
         {
             case "All Time":
@@ -46,11 +52,16 @@ public partial class AttemptsViewModel : WidgetViewModel
 
             case "Session":
                 _attempts = Globals.sessionData[Globals.currentCourse].Attempts;
-                _finishes = Globals.sessionData[Globals.currentCourse].FinishedRaces;
+                _finishes = Globals.sessionData[Globals.currentCourse].Finishedraces;
                 break;
 
             case "Grind":
-                if (!Globals.isGrinding) break;
+                if (Globals.grindData == null || Globals.grindPath == "")
+                {
+                    _attempts = 0;
+                    _finishes = 0;
+                    break;
+                }
 
                 _attempts = Globals.grindData.Attempts;
                 _finishes = Globals.grindData.Finishedraces;

@@ -26,7 +26,8 @@ namespace SuperVision.Services
             { 0xF5002C, 1 },  //Game Mode
             { 0xF50036, 1 },  //Screen Mode
             { 0xF50162, 1 },  //Pause Mode
-            { 0xF50124, 1 }   //current course
+            { 0xF50124, 1 },   //current course
+            { 0xF51F20, 5 }   //replay check (id = 0, 4)
         };
 
         public void UpdateState(Dictionary<uint, byte[]> data)
@@ -41,6 +42,7 @@ namespace SuperVision.Services
             data.TryGetValue(0xF50036, out var sModeData);
             data.TryGetValue(0xF50162, out var pModeData);
             data.TryGetValue(0xF50124, out var courseData);
+            data.TryGetValue(0xF51F20, out var replayCheckData);
 
             //lap times
             int cs1 = Globals.StrToCs(Globals.BytesToStr(lapData[0], lapData[1], lapData[3]));
@@ -74,7 +76,7 @@ namespace SuperVision.Services
             var session = Globals.sessionData[Globals.currentCourse];
 
             bool raceFinished = lapSplits[4] > 0 && lapReached == 6;
-            bool shouldSave = screenMode == 0x02 && (pauseMode == 0x03 || raceFinished);
+            bool shouldSave = screenMode == 0x02 && (pauseMode == 0x03 || raceFinished) && (replayCheckData[0] != 2 && replayCheckData[4] != 192);
 
             try
             {
@@ -86,13 +88,7 @@ namespace SuperVision.Services
                     var alltimeCourse = Globals.AllTimeData[Globals.currentRegion][Globals.currentCourse];
 
                     UpdateRaceStats(alltimeCourse, DriverNames.Map[racerId], finishTime, lapSplits, lapReached);
-
-                    session.Attempts++;
-                    if (lapSplits[4] > 0)
-                    {
-                        session.FinishedRaces++;
-                        if (finishTime < session.FiveLap || session.FiveLap == 0) session.FiveLap = finishTime;
-                    }
+                    UpdateRaceStats(session, DriverNames.Map[racerId], finishTime, lapSplits, lapReached, true);
 
                     Globals.saveData(Globals.jsonPath);
 
@@ -141,38 +137,13 @@ namespace SuperVision.Services
                 );
                 await box.ShowAsync();*/
             }
-
-            if (_jsonLock) return;
-            //constantly updates the best flap for the course
-            if (lapSplits.Where(l => l > 0).ToList().Any())
-            {
-                int flap = lapSplits.Where(l => l > 0).ToList().Min();
-
-                if (session.Flap == 0 || flap < session.Flap)
-                {
-                    session.Flap = flap;
-                }
-            }
-
-            //session laps reached.
-            if (lapReached >= 1 && lapReached <= 5)
-            {
-                if (_lastCountedLap != lapReached)
-                {
-                    session.LapsReached[lapReached - 1]++;
-                    _lastCountedLap = lapReached;
-                }
-            }
-            else
-            {
-                _lastCountedLap = 0;
-            }
         }
 
-        private void UpdateRaceStats(IRaceTracker data, string character, int racetime, int[] laps, int lapreached)
+        private void UpdateRaceStats(IRaceTracker data, string character, int racetime, int[] laps, int lapreached, bool isSession = false)
         {
             data.Attempts++;
             int raceId = data.Attempts;
+            bool isFinished = false;
 
             data.Races.Add(new Race
             {
@@ -184,7 +155,11 @@ namespace SuperVision.Services
             });
 
             //if race finished, set lapreached to 5
-            if (lapreached == 6) lapreached--;
+            if (lapreached == 6)
+            {
+                lapreached--;
+                isFinished = true;
+            }
 
             //loop through all laps finished
             for (int i = 0; i < lapreached; i++)
@@ -200,33 +175,39 @@ namespace SuperVision.Services
                 if (laps[i] == 0) break;
 
                 //if id is 0 (no best lap) or the laptime is lower than the saved time
-                if (data.Bestlaps[i] == 0 || laps[i] < data.Races[data.Bestlaps[i] - 1].Laps[i])
+                if (data.Bestlaps[i] == 0 || laps[i] < Globals.getRaceById(data.Bestlaps[i], data.Races).Laps[i])
                 {
                     //save race id
                     data.Bestlaps[i] = raceId;
                 }
             }
 
-            //if lap5 split is longer than 0 (race finished)
-            if (laps[4] > 0)
+            //if finished OR isSession is true
+            if (isFinished || isSession)
             {
-                data.Finishedraces++;
+                //grab the fastest non 0 lap
+                int flap = laps[0] > 0 ? laps.Where(l => l > 0).DefaultIfEmpty(0).Min() : 0;
+               
+                //if fastest lap is 0 (no laps finished), stop.
+                if (flap == 0) return;
 
-                //if fivelap id is 0 (no saved time) or if racetime is lower than saved racetime
-                if (data.Pr.Fivelap == 0 || racetime < Globals.getRaceById(data.Pr.Fivelap, data.Races).Racetime)
-                {
-                    //save race id
-                    data.Pr.Fivelap = raceId;
-                }
-
-                //grab the fastest lap
-                int flap = laps.Where(l => l > 0).DefaultIfEmpty(0).Min();
                 //if flap id is 0 (no saved time) or if flap is lower than saved flap
-                if (data.Pr.Flap == 0 || flap < Globals.getRaceById(data.Pr.Flap, data.Races).Laps.Min())
+                if (data.Pr.Flap == 0 || flap < Globals.getRaceById(data.Pr.Flap, data.Races).Laps.Where(l => l > 0).DefaultIfEmpty(0).Min())
                 {
                     //save race id
                     data.Pr.Flap = raceId;
                 }
+            }
+
+            //if not finished, return.
+            if (!isFinished) return;
+
+            data.Finishedraces++;
+            //if fivelap id is 0 (no saved time) or if racetime is lower than saved racetime
+            if (data.Pr.Fivelap == 0 || racetime < Globals.getRaceById(data.Pr.Fivelap, data.Races).Racetime)
+            {
+                //save race id
+                data.Pr.Fivelap = raceId;
             }
         }
     }

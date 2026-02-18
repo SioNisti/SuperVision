@@ -21,7 +21,7 @@ public partial class GrindInfoViewModel : WidgetViewModel
         return new Dictionary<uint, uint>(); //doesnt read memory
     }
 
-    [ObservableProperty] private string _grindInfos = $"Grind Status\nInactive";
+    [ObservableProperty] private string _grindInfos = $"Grind Status:\nInactive";
     private string _course = "MC3";
     private string _type = "5lap";
     private string _region = "NTSC";
@@ -30,7 +30,7 @@ public partial class GrindInfoViewModel : WidgetViewModel
     {
         if (!Globals.isGrinding)
         {
-            GrindInfos = "Grind Status\nInactive";
+            GrindInfos = "Grind Status:\nInactive";
         } else
         {
             GrindInfos = $"{_course} {_type} {_region}\nGoal: {Globals.CsToStr(_goal)}";
@@ -39,7 +39,12 @@ public partial class GrindInfoViewModel : WidgetViewModel
 
     public override void UpdateState(Dictionary<uint, byte[]> data)
     {
-        if (!Globals.isGrinding) return;
+        if (!Globals.isGrinding)
+        {
+            if (Globals.grindData != null) if (Globals.grindData.EndDate == null) GrindInfos = "Grind Status:\nInactive";
+
+            return;
+        }
 
         _course = Globals.grindData.Course;
         _type = Globals.grindData.GoalType;

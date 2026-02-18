@@ -81,6 +81,12 @@
     <Compile Update="Views\LayoutEditor.axaml.cs">
       <DependentUpon>LayoutEditor.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Widgets\AverageLap\AverageLapView.axaml.cs">
+      <DependentUpon>AverageLapView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Widgets\CoursePlaytime\CoursePlaytimeView.axaml.cs">
+      <DependentUpon>CoursePlaytimeView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Widgets\CoursePr\CoursePrView.axaml.cs">
       <DependentUpon>CoursePrView.axaml</DependentUpon>
     </Compile>

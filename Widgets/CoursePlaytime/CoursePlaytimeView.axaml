@@ -1,0 +1,21 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:SuperVision"
+             xmlns:widget="using:SuperVision.Widgets.CoursePlaytime"
+             x:Class="SuperVision.Widgets.CoursePlaytime.CoursePlaytimeView"
+             x:DataType="widget:CoursePlaytimeViewModel"
+             HorizontalAlignment="Stretch">
+
+    <UserControl.Resources>
+        <local:ColorToBrushConverter x:Key="ColorToBrush"/>
+    </UserControl.Resources>
+
+    <Border Background="{Binding BgColor, Converter={StaticResource ColorToBrush}}" Padding="10,5">
+        <TextBlock
+            Text="{Binding WidgetContentText}" 
+            Foreground="{Binding FontColor, Converter={StaticResource ColorToBrush}}" 
+            FontSize="{Binding FontSize}"
+            FontFamily="{Binding FontName}"
+            HorizontalAlignment="Left"/>
+    </Border>
+</UserControl>

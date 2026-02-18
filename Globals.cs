@@ -10,7 +10,18 @@ namespace SuperVision
 {
     public static class Globals
     {
-        public static string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SuperVision");
+        private static string _baseFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SuperVision");
+        public static string folder
+        {
+            get
+            {
+                #if DEBUG
+                    return Path.Combine(_baseFolder, "debug");
+                #else
+                    return _baseFolder;
+                #endif
+            }
+        }
         public static string jsonPath = Path.Combine(folder, "data.json");
         public static string layoutPath = Path.Combine(folder, "layout.json");
         public static string grindFolder = Path.Combine(folder, "Grinds");
@@ -25,6 +36,7 @@ namespace SuperVision
 
         public static string currentRegion { get; set; } = "NTSC";
         public static string currentCourse { get; set; } = "MC3";
+        public static string currentComparison { get; set; } = "All Time";
         public static bool isGrinding { get; set; } = false;
 
         public static Dictionary<string, SessionData> sessionData = new();
@@ -101,6 +113,16 @@ namespace SuperVision
 
             if (path == Globals.grindPath)
                 File.WriteAllText(Globals.grindPath, JsonSerializer.Serialize(Globals.grindData, new JsonSerializerOptions { WriteIndented = true }));
+        }
+
+        public static string handlePrefix(string prefix, bool newLine = true)
+        {
+            if (prefix.Contains("{course}")) prefix = prefix.Replace("{course}", $"{Globals.currentCourse}");
+            if (prefix.Contains("{comparison}")) prefix = prefix.Replace("{comparison}", $"{Globals.currentComparison}");
+
+            if (prefix != "" && newLine) prefix = prefix + "\n";
+
+            return prefix;
         }
     }
 }

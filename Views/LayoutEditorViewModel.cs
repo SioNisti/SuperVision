@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MsBox.Avalonia;
@@ -87,8 +88,10 @@ namespace SuperVision.ViewModels
 
                 var newWidget = (WidgetViewModel)Activator.CreateInstance(t)!;
 
-                newWidget.BgColor = "black";
-                newWidget.FontColor = "white";
+                newWidget.BgColor = Colors.Black;
+                newWidget.FontColor = Colors.White;
+                newWidget.FontName = "Courier New";
+                newWidget.FontSize = 22;
 
                 newWidget.RefreshDisplay();
 
@@ -117,6 +120,8 @@ namespace SuperVision.ViewModels
                 var settingsList = Widgets.Select(w => new WidgetSettings
                 {
                     Type = w.WidgetType,
+                    FontName = w.FontName.Name,
+                    FontSize = w.FontSize,
                     FontColor = w.FontColor,
                     BgColor = w.BgColor,
                     Variables = w.Variables.ToDictionary(v => v.Name, v => v.Value)
@@ -147,7 +152,7 @@ namespace SuperVision.ViewModels
             editor.DataContext = widget;
             if (App.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                await editor.ShowDialog(desktop.MainWindow);
+                editor.Show(desktop.MainWindow);
             }
             widget.RefreshDisplay();
         }

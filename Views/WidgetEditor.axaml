@@ -19,6 +19,37 @@
                        FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
             <Separator/>
 
+            <TextBlock Text="Appearance" FontWeight="Bold"/>
+
+            <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto, Auto" RowSpacing="10" ColumnSpacing="10">
+                
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Font Name:" VerticalAlignment="Center"/>
+                <ComboBox Grid.Row="0" Grid.Column="1" 
+                          ItemsSource="{Binding AvailableFonts}"
+                          SelectedItem="{Binding FontName}"
+                          HorizontalAlignment="Stretch">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Font Size:" VerticalAlignment="Center"/>
+                <NumericUpDown Grid.Row="1" Grid.Column="1" 
+                               Value="{Binding FontSize}" 
+                               Minimum="8" Maximum="72" Increment="1"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Text Color:" VerticalAlignment="Center"/>
+                <ColorPicker Grid.Row="2" Grid.Column="1" Color="{Binding FontColor}" Width="225"></ColorPicker>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Back Color:" VerticalAlignment="Center"/>
+                <ColorPicker Grid.Row="3" Grid.Column="1" Color="{Binding BgColor}" Width="225"></ColorPicker>
+                
+            </Grid>
+
+            <Separator/>
+
             <TextBlock Text="Settings" FontWeight="Bold"/>
             
             <ItemsControl ItemsSource="{Binding Variables}">

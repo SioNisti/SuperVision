@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using SuperVision.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
@@ -14,10 +15,30 @@ public partial class SplitsViewModel : WidgetViewModel
 {
     public override string DisplayName => "Splits";
     public override string WidgetType => "Splits";
+
+    [ObservableProperty] private string _prefixString = "";
+    public partial class LapDisplayItem : ObservableObject
+    {
+        [ObservableProperty] private string _label = "Lx";
+        [ObservableProperty] private string _value = Globals.CsToStr(0);
+    }
+
+    public ObservableCollection<LapDisplayItem> LapRows { get; } = new();
     public SplitsViewModel()
     {
         //define setting variable(s)
-        DefineVariable("Show Total", "Bool", "True");
+        DefineVariable("Prefix", "Text", "Live");
+
+        for (int i = 0; i <= 5; i++)
+        {
+            if (i != 5)
+            {
+                LapRows.Add(new LapDisplayItem { Label = $"L{i+1}" });
+            } else
+            {
+                LapRows.Add(new LapDisplayItem { Label = $"TOTAL" });
+            }
+        }
     }
 
     public override Dictionary<uint, uint> GetRequiredAddresses() => new()
@@ -27,22 +48,26 @@ public partial class SplitsViewModel : WidgetViewModel
         { 0xF510F9, 1 }, //laps reached
     };
 
-    [ObservableProperty] private string _raceSplits = "Live:\n   L1 0'00\"00\n   L2 0'00\"00\n   L3 0'00\"00\n   L4 0'00\"00\n   L5 0'00\"00\nTOTAL 0'00\"00";
-
     public bool _clipBoardLock = false;
     private int[] laps = [0, 0, 0, 0, 0];
     private string total = Globals.CsToStr(0);
     public override void RefreshDisplay()
     {
-        string res = $"Live:\n   L1 {Globals.CsToStr(laps[0])}\n   L2 {Globals.CsToStr(laps[1])}\n   L3 {Globals.CsToStr(laps[2])}\n   L4 {Globals.CsToStr(laps[3])}\n   L5 {Globals.CsToStr(laps[4])}";
-        
-        if (GetBool("Show Total"))
-        {
-            RaceSplits = $"{res}\nTOTAL {total}";
-        } else
-        {
+        string prefix = Globals.handlePrefix(GetVar("Prefix"), false);
+        PrefixString = $"{prefix}";
 
-            RaceSplits = res;
+        for (int i = 0; i <= 5; i++)
+        {
+            if (i != 5)
+            {
+                var x = Globals.CsToStr(laps[i]);
+
+                LapRows[i].Value = x;
+            }
+            else
+            {
+                LapRows[i].Value = total;
+            }
         }
     }
 

@@ -16,6 +16,6 @@
             Foreground="{Binding FontColor, Converter={StaticResource ColorToBrush}}" 
             FontSize="{Binding FontSize}"
             FontFamily="{Binding FontName}"
-            HorizontalAlignment="Left"/>
+            HorizontalAlignment="{Binding ContentTextAlignment}"/>
     </Border>
 </UserControl>

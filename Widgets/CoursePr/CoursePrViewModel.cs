@@ -44,7 +44,7 @@ public partial class CoursePrViewModel : WidgetViewModel
     }
     public string getPrInfo(string type, string comparison)
     {
-        if (!Globals.validateCourse(Globals.currentCourse)) Globals.CsToStr(0);
+        if (!Globals.validateCourse(Globals.currentCourse)) return Globals.CsToStr(0);
 
         if (comparison == "Current Comparison") comparison = Globals.currentComparison;
         switch (comparison)

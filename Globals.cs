@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -42,6 +43,7 @@ namespace SuperVision
         public static Dictionary<string, SessionData> sessionData = new();
         public static Dictionary<string, Dictionary<string, CourseData>>? AllTimeData { get; set; }
         public static GrindData grindData { get; set; }
+        public static Dictionary<string, string> codes = new Dictionary<string, string>();
 
         //thing to convert given value to 0 if it's 0xFF (empty lap time)
         public static int Normalize(int value)
@@ -55,6 +57,7 @@ namespace SuperVision
             int lapcs = Normalize(cs);
             int laps = Normalize(s);
             int lapm = Normalize(m);
+
             return $"{lapm:X}'{laps:X2}\"{lapcs:X2}";
         }
 
@@ -88,15 +91,9 @@ namespace SuperVision
 
         public static bool validateCourse(string course)
         {
-            int pos = Array.IndexOf(Globals.courses, course);
-            if (pos > -1)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            int pos = Array.IndexOf(courses, course);
+
+            return pos > -1 ? true : false;
         }
 
         public static Race getRaceById(int id, List<Race> races)
@@ -108,19 +105,47 @@ namespace SuperVision
 
         public static void saveData(string path)
         {
-            if (path == Globals.jsonPath)
-                File.WriteAllText(Globals.jsonPath, JsonSerializer.Serialize(Globals.AllTimeData, new JsonSerializerOptions { WriteIndented = true }));
+            if (path == jsonPath)
+                File.WriteAllText(jsonPath, JsonSerializer.Serialize(AllTimeData, new JsonSerializerOptions { WriteIndented = true }));
 
-            if (path == Globals.grindPath)
-                File.WriteAllText(Globals.grindPath, JsonSerializer.Serialize(Globals.grindData, new JsonSerializerOptions { WriteIndented = true }));
+            if (path == grindPath)
+                File.WriteAllText(grindPath, JsonSerializer.Serialize(grindData, new JsonSerializerOptions { WriteIndented = true }));
+        }
+
+        public static void loadPrefixes()
+        {
+            codes.Clear();
+            
+            //basics
+            codes.Add("{course}", currentCourse);
+            codes.Add("{comparison}", currentComparison);
+            codes.Add("{region}", currentRegion);
+            codes.Add("{isgrinding}", isGrinding.ToString());
+
+            //alltime+session
+            codes.Add("{alltime_attempts}", AllTimeData != null && validateCourse(currentCourse) ? AllTimeData[currentRegion][currentCourse].Attempts.ToString() : "0");
+            codes.Add("{session_attempts}", sessionData != null && validateCourse(currentCourse) ? sessionData[currentCourse].Attempts.ToString() : "0");
+            codes.Add("{alltime_finishes}", AllTimeData != null && validateCourse(currentCourse) ? AllTimeData[currentRegion][currentCourse].Finishedraces.ToString() : "0");
+            codes.Add("{session_finishes}", sessionData != null && validateCourse(currentCourse) ? sessionData[currentCourse].Finishedraces.ToString() : "0");
+
+            //grind
+            codes.Add("{grind_attempts}", grindData != null ? grindData.Attempts.ToString() : "0");
+            codes.Add("{grind_finishes}", grindData != null ? grindData.Finishedraces.ToString() : "0");
+            codes.Add("{grind_course}", grindData != null ? grindData.Course : "null");
+            codes.Add("{grind_type}", grindData != null ? grindData.GoalType : "null");
+            codes.Add("{grind_region}", grindData != null ? grindData.Region : "null");
+            codes.Add("{grind_goal}", grindData != null ? CsToStr(grindData.GoalTime) : "null");
         }
 
         public static string handlePrefix(string prefix, bool newLine = true)
         {
-            if (prefix.Contains("{course}")) prefix = prefix.Replace("{course}", $"{Globals.currentCourse}");
-            if (prefix.Contains("{comparison}")) prefix = prefix.Replace("{comparison}", $"{Globals.currentComparison}");
+            loadPrefixes();
+            foreach (var code in codes)
+            {
+                if (prefix.Contains(code.Key)) prefix = prefix.Replace(code.Key, code.Value);
+            }
 
-            if (prefix != "" && newLine) prefix = prefix + "\n";
+            if (prefix != "" && newLine) prefix += "\n";
 
             return prefix;
         }

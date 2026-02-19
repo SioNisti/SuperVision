@@ -15,25 +15,32 @@ public partial class GrindInfoViewModel : WidgetViewModel
 {
     public override string DisplayName => "Grind Info";
     public override string WidgetType => "GrindInfo";
+    public GrindInfoViewModel()
+    {
+        //define setting variable(s)
+        DefineVariable("Prefix", "Text", "{grind_course} {grind_type} {grind_region}");
+        DefineVariable("Alignment", "Combo", "Left", new List<string> { "Left", "Center", "Right" });
+        DefineVariable("Single Line", "Bool", "False");
+    }
 
     public override Dictionary<uint, uint> GetRequiredAddresses()
     {
         return new Dictionary<uint, uint>(); //doesnt read memory
     }
 
-    [ObservableProperty] private string _grindInfos = $"Grind Status:\nInactive";
-    private string _course = "MC3";
-    private string _type = "5lap";
-    private string _region = "NTSC";
-    private int _goal = 0;
+    [ObservableProperty] private string _grindInfos = "";
+    [ObservableProperty] private string _contentTextAlignment = "";
+
     public override void RefreshDisplay()
     {
+        string prefix = GetVar("Prefix");
+        ContentTextAlignment = GetVar("Alignment");
         if (!Globals.isGrinding)
         {
-            GrindInfos = "Grind Status:\nInactive";
+            GrindInfos = GetBool("Single Line") ? "Grind Status: Inactive" : "Grind Status:\nInactive";
         } else
         {
-            GrindInfos = $"{_course} {_type} {_region}\nGoal: {Globals.CsToStr(_goal)}";
+            GrindInfos = GetBool("Single Line") ? $"{Globals.handlePrefix(prefix, false)} {Globals.CsToStr(Globals.grindData.GoalTime)}" : $"{Globals.handlePrefix(prefix)}{Globals.CsToStr(Globals.grindData.GoalTime)}";//$"{_course} {_type} {_region}\nGoal: {Globals.CsToStr(_goal)}";
         }
     }
 
@@ -41,15 +48,11 @@ public partial class GrindInfoViewModel : WidgetViewModel
     {
         if (!Globals.isGrinding)
         {
-            if (Globals.grindData != null) if (Globals.grindData.EndDate == null) GrindInfos = "Grind Status:\nInactive";
+            if (Globals.grindData != null) if (Globals.grindData.EndDate == null) GrindInfos = GetBool("Single Line") ? "Grind Status: Inactive" : "Grind Status:\nInactive";
 
-            return;
+            //return;
         }
 
-        _course = Globals.grindData.Course;
-        _type = Globals.grindData.GoalType;
-        _region = Globals.grindData.Region;
-        _goal = Globals.grindData.GoalTime;
 
         RefreshDisplay();
     }

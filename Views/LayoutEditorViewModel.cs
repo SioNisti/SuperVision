@@ -20,7 +20,7 @@ namespace SuperVision.ViewModels
 {
     public partial class LayoutEditorViewModel : ObservableObject
     {
-        private readonly MainWindowViewModel _mainVm;
+        public MainWindowViewModel _mainVm { get; }
 
         public ObservableCollection<WidgetViewModel> Widgets => _mainVm.Widgets;
 

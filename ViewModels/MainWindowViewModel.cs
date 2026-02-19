@@ -27,15 +27,20 @@ namespace SuperVision.ViewModels
         public MainLogic Logic => _logic;
         private readonly MainLogic _logic = new MainLogic();
         public ObservableCollection<WidgetViewModel> Widgets { get; set; } = new();
-
+        [ObservableProperty] private double _windowWidth = 192;
         public MainWindowViewModel()
         {
             //initialize the sessiondata variable
             foreach (var course in Globals.courses) { Globals.sessionData[course] = new SessionData(); }
 
+            //load all prefix codes
+            Globals.loadPrefixes();
+
+            //load layout
             _logic = new MainLogic();
             _logic.CheckJson();
             LoadLayout();
+
 
             //add the "logger" to the program. this is the thing that saves the data.json
             var logger = new AttemptDataService();

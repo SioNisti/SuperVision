@@ -12,13 +12,14 @@ namespace SuperVision.Views
 {
     public partial class MainWindow : Window
     {
+        private bool _isUpdatingLayout = false;
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent(); 
         }
+
         private void Window_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
-            // Only start dragging on left mouse button
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
                 this.BeginMoveDrag(e);

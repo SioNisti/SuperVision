@@ -11,10 +11,11 @@
     </UserControl.Resources>
 
     <Border Background="{Binding BgColor, Converter={StaticResource ColorToBrush}}" Padding="10,5">
-        <TextBlock Text="{Binding GrindInfos}" 
-                    Foreground="{Binding FontColor, Converter={StaticResource ColorToBrush}}" 
-                    FontSize="{Binding FontSize}"
-                    FontFamily="{Binding FontName}"
-        />
+        <TextBlock
+            Text="{Binding GrindInfos}" 
+            Foreground="{Binding FontColor, Converter={StaticResource ColorToBrush}}" 
+            FontSize="{Binding FontSize}"
+            FontFamily="{Binding FontName}"
+            HorizontalAlignment="{Binding ContentTextAlignment}"/>
     </Border>
 </UserControl>

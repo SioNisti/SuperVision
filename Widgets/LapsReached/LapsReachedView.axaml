@@ -19,7 +19,7 @@
                 HorizontalAlignment="Left"
                 Text="{Binding PrefixString}" />
             
-            <ItemsControl ItemsSource="{Binding LapRows}" Foreground="{Binding FontColor}"> 
+            <ItemsControl ItemsSource="{Binding LapRows}" Foreground="{Binding FontColor, Converter={StaticResource ColorToBrush}}"> 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnDefinitions="Auto, *">

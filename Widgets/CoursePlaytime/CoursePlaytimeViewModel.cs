@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SuperVision.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ public partial class CoursePlaytimeViewModel : WidgetViewModel
         //define setting variable(s)
         DefineVariable("Comparison", "Combo", "Current Comparison", new List<string> { "Current Comparison", "All Time", "Session", "Grind" });
         DefineVariable("Prefix", "Text", "{course} Playtime");
+        DefineVariable("Alignment", "Combo", "Left", new List<string> { "Left", "Center", "Right" });
+        DefineVariable("Single Line", "Bool", "False");
     }
 
     public override Dictionary<uint, uint> GetRequiredAddresses()
@@ -25,14 +28,16 @@ public partial class CoursePlaytimeViewModel : WidgetViewModel
     }
 
     [ObservableProperty] private string _widgetContentText = "";
+    [ObservableProperty] private string _contentTextAlignment = "";
     private int _playtime = 0;
 
     public override void RefreshDisplay()
     {
         string prefix = GetVar("Prefix");
-        prefix = Globals.handlePrefix(prefix);
+        prefix = GetBool("Single Line") ? $"{Globals.handlePrefix(prefix, false)} " : Globals.handlePrefix(prefix);
 
         WidgetContentText = $"{prefix}{Globals.CsToStr(_playtime)}";
+        ContentTextAlignment = GetVar("Alignment");
     }
     public override void UpdateState(Dictionary<uint, byte[]> data)
     {

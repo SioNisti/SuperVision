@@ -11,7 +11,7 @@
 		PointerPressed="Window_PointerPressed"
         Icon="/Assets/icon.ico"
         Title="SuperVision"
-		Width="192"
+		
         SizeToContent="WidthAndHeight"
 		CanResize="False"
 		SystemDecorations="BorderOnly">
@@ -45,7 +45,7 @@
         </ContextMenu>
     </Window.ContextMenu>
 
-    <Panel Background="Transparent">
+    <Panel Background="Transparent" Width="{Binding WindowWidth}">
         <ItemsControl ItemsSource="{Binding Widgets}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>

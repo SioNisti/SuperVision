@@ -37,7 +37,7 @@ namespace SuperVision
                 File.WriteAllText(Globals.jsonPath, "{}");
 
             if (!File.Exists(Globals.layoutPath))
-                File.WriteAllText(Globals.layoutPath, "[  {\r\n    \"Type\": \"Splits\",\r\n    \"FontName\": \"Courier New\",\r\n    \"FontSize\": 22,\r\n    \"FontColor\": \"white\",\r\n    \"BgColor\": \"black\",\r\n    \"Variables\": {\r\n      \"Prefix\": \"Live:\"\r\n    },\r\n    \"DisplayText\": \"\"\r\n  }]");
+                File.WriteAllText(Globals.layoutPath, "{\r\n  \"WindowWidth\": 192,\r\n  \"WindowHeight\": 300,\r\n  \"FontName\": \"19/02/2026 21.16.33\",\r\n  \"FontSize\": 678979083,\r\n  \"FontColor\": \"Aqua\",\r\n  \"BgColor\": \"Aqua\",\r\n  \"Widgets\": [\r\n    {\r\n      \"Type\": \"Splits\",\r\n      \"FontName\": \"Courier New\",\r\n      \"FontSize\": 22,\r\n      \"FontColor\": \"White\",\r\n      \"BgColor\": \"Black\",\r\n      \"Variables\": {\r\n        \"Prefix\": \"Live:\"\r\n      },\r\n      \"DisplayText\": \"\"\r\n    }\r\n  ]\r\n}");
             
             string fjson = File.ReadAllText(Globals.jsonPath);
             Globals.AllTimeData = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, CourseData>>>(fjson) ?? new Dictionary<string, Dictionary<string, CourseData>>();

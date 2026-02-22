@@ -16,6 +16,12 @@
 		CanResize="False"
 		SystemDecorations="BorderOnly">
 
+		<!--
+		MinWidth="200" MinHeight="200"
+		Width="200" Height="200"
+		CanResize="True"
+		SystemDecorations="BorderOnly"> -->
+
     <Window.ContextMenu>
         <ContextMenu FontFamily="Courier New">
             <MenuItem Header="Connect" Command="{Binding ConnectCommand}"/>
@@ -54,4 +60,23 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
     </Panel>
+
+    <!--
+    <Panel Background="Transparent">
+        <LayoutTransformControl x:Name="Transformer" HorizontalAlignment="Left" VerticalAlignment="Top">
+            
+            <LayoutTransformControl.LayoutTransform>
+                <ScaleTransform ScaleX="1" ScaleY="1"/>
+            </LayoutTransformControl.LayoutTransform>
+
+            <ItemsControl x:Name="Container" ItemsSource="{Binding Widgets}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+            
+        </LayoutTransformControl>
+    </Panel> -->
 </Window>

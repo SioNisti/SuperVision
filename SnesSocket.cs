@@ -1,12 +1,16 @@
-﻿using System;
+﻿using HarfBuzzSharp;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SuperVision
 {
@@ -26,7 +30,8 @@ namespace SuperVision
             GetAddress,
             Reset,
             Attach,
-            Info
+            Info,
+            GetFile
         }
 
         public bool wsConnect()

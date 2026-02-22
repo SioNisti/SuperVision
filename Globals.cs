@@ -43,7 +43,7 @@ namespace SuperVision
         public static Dictionary<string, SessionData> sessionData = new();
         public static Dictionary<string, Dictionary<string, CourseData>>? AllTimeData { get; set; }
         public static GrindData grindData { get; set; }
-        public static Dictionary<string, string> codes = new Dictionary<string, string>();
+        public static Dictionary<string, Func<string>> codes = new Dictionary<string, Func<string>>();
 
         //thing to convert given value to 0 if it's 0xFF (empty lap time)
         public static int Normalize(int value)
@@ -117,35 +117,59 @@ namespace SuperVision
             codes.Clear();
             
             //basics
-            codes.Add("{course}", currentCourse);
-            codes.Add("{comparison}", currentComparison);
-            codes.Add("{region}", currentRegion);
-            codes.Add("{isgrinding}", isGrinding.ToString());
+            codes.Add("{course}", () => currentCourse);
+            codes.Add("{comparison}", () => currentComparison);
+            codes.Add("{region}", () => currentRegion);
+            codes.Add("{isgrinding}", () => isGrinding.ToString());
 
             //alltime+session
-            codes.Add("{alltime_attempts}", AllTimeData != null && validateCourse(currentCourse) ? AllTimeData[currentRegion][currentCourse].Attempts.ToString() : "0");
-            codes.Add("{session_attempts}", sessionData != null && validateCourse(currentCourse) ? sessionData[currentCourse].Attempts.ToString() : "0");
-            codes.Add("{alltime_finishes}", AllTimeData != null && validateCourse(currentCourse) ? AllTimeData[currentRegion][currentCourse].Finishedraces.ToString() : "0");
-            codes.Add("{session_finishes}", sessionData != null && validateCourse(currentCourse) ? sessionData[currentCourse].Finishedraces.ToString() : "0");
+            codes.Add("{alltime_attempts}", () => AllTimeData != null && validateCourse(currentCourse) ? AllTimeData[currentRegion][currentCourse].Attempts.ToString() : "0");
+            codes.Add("{session_attempts}", () => sessionData != null && validateCourse(currentCourse) ? sessionData[currentCourse].Attempts.ToString() : "0");
+            codes.Add("{alltime_finishes}", () => AllTimeData != null && validateCourse(currentCourse) ? AllTimeData[currentRegion][currentCourse].Finishedraces.ToString() : "0");
+            codes.Add("{session_finishes}", () => sessionData != null && validateCourse(currentCourse) ? sessionData[currentCourse].Finishedraces.ToString() : "0");
 
             //grind
-            codes.Add("{grind_attempts}", grindData != null ? grindData.Attempts.ToString() : "0");
-            codes.Add("{grind_finishes}", grindData != null ? grindData.Finishedraces.ToString() : "0");
-            codes.Add("{grind_course}", grindData != null ? grindData.Course : "null");
-            codes.Add("{grind_type}", grindData != null ? grindData.GoalType : "null");
-            codes.Add("{grind_region}", grindData != null ? grindData.Region : "null");
-            codes.Add("{grind_goal}", grindData != null ? CsToStr(grindData.GoalTime) : "null");
+            codes.Add("{grind_attempts}", () => grindData != null ? grindData.Attempts.ToString() : "0");
+            codes.Add("{grind_finishes}", () => grindData != null ? grindData.Finishedraces.ToString() : "0");
+            codes.Add("{grind_course}", () => grindData != null ? grindData.Course : "null");
+            codes.Add("{grind_type}", () => grindData != null ? grindData.GoalType : "null");
+            codes.Add("{grind_region}", () => grindData != null ? grindData.Region : "null");
+            codes.Add("{grind_goal}", () => grindData != null ? CsToStr(grindData.GoalTime) : "null");
+
+            //current comparison
+            codes.Add("{cc_attempts}", () => { switch (currentComparison) {
+                case "Session":
+                    return sessionData != null && validateCourse(currentCourse) ? sessionData[currentCourse].Attempts.ToString() : "0";
+
+                case "Grind":
+                    return grindData != null ? grindData.Attempts.ToString() : "0";
+
+                default:
+                    return AllTimeData != null && validateCourse(currentCourse) ? AllTimeData[currentRegion][currentCourse].Attempts.ToString() : "0";
+            }});
+
+            codes.Add("{cc_finishes}", () => { switch (currentComparison) {
+                case "Session":
+                    return sessionData != null && validateCourse(currentCourse) ? sessionData[currentCourse].Finishedraces.ToString() : "0";
+
+                case "Grind":
+                    return grindData != null ? grindData.Finishedraces.ToString() : "0";
+
+                default:
+                    return AllTimeData != null && validateCourse(currentCourse) ? AllTimeData[currentRegion][currentCourse].Finishedraces.ToString() : "0";
+            }});
         }
 
         public static string handlePrefix(string prefix, bool newLine = true)
         {
-            loadPrefixes();
+            if (string.IsNullOrEmpty(prefix)) return "";
+
             foreach (var code in codes)
             {
-                if (prefix.Contains(code.Key)) prefix = prefix.Replace(code.Key, code.Value);
+                if (prefix.Contains(code.Key)) prefix = prefix.Replace(code.Key, code.Value());
             }
 
-            if (prefix != "" && newLine) prefix += "\n";
+            if (newLine) prefix += "\n";
 
             return prefix;
         }

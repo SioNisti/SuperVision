@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls.ApplicationLifetimes;
+﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -115,31 +116,7 @@ namespace SuperVision.ViewModels
         [RelayCommand]
         private async void SaveLayout()
         {
-            try
-            {
-                var settingsList = Widgets.Select(w => new WidgetSettings
-                {
-                    Type = w.WidgetType,
-                    FontName = w.FontName.Name,
-                    FontSize = w.FontSize,
-                    FontColor = w.FontColor,
-                    BgColor = w.BgColor,
-                    Variables = w.Variables.ToDictionary(v => v.Name, v => v.Value)
-                }).ToList();
-
-                string json = JsonSerializer.Serialize(settingsList, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(Globals.layoutPath, json);
-            }
-            catch (Exception ex)
-            {
-                var box = MessageBoxManager.GetMessageBoxStandard(
-                    "Error",
-                    $"Error saving layout.\n{ex.Message}",
-                    ButtonEnum.Ok,
-                    MsBox.Avalonia.Enums.Icon.Error
-                );
-                await box.ShowAsync();
-            }
+            _mainVm.SaveLayoutAsync();
         }
 
         [RelayCommand]

@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -19,6 +20,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace SuperVision.ViewModels
 {
@@ -27,7 +29,8 @@ namespace SuperVision.ViewModels
         public MainLogic Logic => _logic;
         private readonly MainLogic _logic = new MainLogic();
         public ObservableCollection<WidgetViewModel> Widgets { get; set; } = new();
-        [ObservableProperty] private double _windowWidth = 192;
+        [ObservableProperty] private double _windowWidth = 192; 
+        [ObservableProperty] private double _windowHeight = 300;
         public MainWindowViewModel()
         {
             //initialize the sessiondata variable
@@ -52,7 +55,11 @@ namespace SuperVision.ViewModels
         public void LoadLayout()
         {
             string json = File.ReadAllText(Globals.layoutPath);
-            var list = JsonSerializer.Deserialize<List<WidgetSettings>>(json);
+            var layout  = JsonSerializer.Deserialize<LayoutSaveData>(json);
+            var list = layout.Widgets.ToList();
+
+            _windowHeight = layout.WindowHeight;
+            _windowWidth = layout.WindowWidth;
 
             Widgets.Clear();
             _logic.ActiveWidgets.Clear();
@@ -76,6 +83,45 @@ namespace SuperVision.ViewModels
                     Widgets.Add(widget);
                     _logic.ActiveWidgets.Add(widget);
                 }
+            }
+        }
+        public async Task SaveLayoutAsync()
+        {
+            try
+            {
+                var layoutData = new LayoutSaveData
+                {
+                    WindowWidth = _windowWidth,
+                    WindowHeight = _windowHeight,
+                    
+                    FontName = $"{DateTime.Now.ToString()}",
+                    FontSize = (int)DateTime.Now.Ticks,
+                    FontColor = Colors.Cyan,
+                    BgColor = Colors.Cyan,
+
+                    Widgets = Widgets.Select(w => new WidgetSettings
+                    {
+                        Type = w.WidgetType,
+                        FontName = w.FontName.Name,
+                        FontSize = w.FontSize,
+                        FontColor = w.FontColor,
+                        BgColor = w.BgColor,
+                        Variables = w.Variables.ToDictionary(v => v.Name, v => v.Value)
+                    }).ToList()
+                };
+
+                string json = JsonSerializer.Serialize(layoutData, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(Globals.layoutPath, json);
+            }
+            catch (Exception ex)
+            {
+                var box = MessageBoxManager.GetMessageBoxStandard(
+                    "Error",
+                    $"Error saving layout.\n{ex.Message}",
+                    ButtonEnum.Ok,
+                    MsBox.Avalonia.Enums.Icon.Error
+                );
+                await box.ShowAsync();
             }
         }
 

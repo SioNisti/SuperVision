@@ -68,40 +68,63 @@ namespace SuperVision.ViewModels
 
         public void LoadLayout()
         {
-            string json = File.ReadAllText(Globals.layoutPath);
-            var layout  = JsonSerializer.Deserialize<LayoutSaveData>(json);
-            var list = layout.Widgets.ToList();
-
-            //global layout styling
-            _windowHeight = layout.WindowHeight;
-            _windowWidth = layout.WindowWidth;
-            /*_fontName = layout.FontName;
-            _fontSize = layout.FontSize;
-            _fontColor = layout.FontColor;
-            _bgColor = layout.BgColor;*/
-
-            Widgets.Clear();
-            _logic.ActiveWidgets.Clear();
-
-            var widgetTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsSubclassOf(typeof(WidgetViewModel)) && !t.IsAbstract);
-
-            foreach (var item in list)
+            try
             {
-                var match = widgetTypes.FirstOrDefault(t =>
+                string json = File.ReadAllText(Globals.layoutPath);
+                var layout = JsonSerializer.Deserialize<LayoutSaveData>(json);
+                Debug.WriteLine(layout.version);
+                if (layout.version != Globals.VersionNumber)
                 {
-                    var instance = (IWidget?)Activator.CreateInstance(t);
-                    return instance?.WidgetType == item.Type;
-                });
-
-                if (match != null)
-                {
-                    var widget = (WidgetViewModel)Activator.CreateInstance(match)!;
-
-                    widget.ApplySettings(item);
-
-                    Widgets.Add(widget);
-                    _logic.ActiveWidgets.Add(widget);
+                    var box = MessageBoxManager.GetMessageBoxStandard(
+                        "Warning",
+                        $"Layout file is from a different version ({layout.version}) and might not work on the current one ({Globals.VersionNumber}).\nI recommend deleting it and making a new layout.",
+                        ButtonEnum.Ok,
+                        MsBox.Avalonia.Enums.Icon.Warning
+                    );
+                    box.ShowAsync();
                 }
+                var list = layout.Widgets.ToList();
+
+                //global layout styling
+                _windowHeight = layout.WindowHeight;
+                _windowWidth = layout.WindowWidth;
+                /*_fontName = layout.FontName;
+                _fontSize = layout.FontSize;
+                _fontColor = layout.FontColor;
+                _bgColor = layout.BgColor;*/
+
+                Widgets.Clear();
+                _logic.ActiveWidgets.Clear();
+
+                var widgetTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsSubclassOf(typeof(WidgetViewModel)) && !t.IsAbstract);
+
+                foreach (var item in list)
+                {
+                    var match = widgetTypes.FirstOrDefault(t =>
+                    {
+                        var instance = (IWidget?)Activator.CreateInstance(t);
+                        return instance?.WidgetType == item.Type;
+                    });
+
+                    if (match != null)
+                    {
+                        var widget = (WidgetViewModel)Activator.CreateInstance(match)!;
+
+                        widget.ApplySettings(item);
+
+                        Widgets.Add(widget);
+                        _logic.ActiveWidgets.Add(widget);
+                    }
+                }
+            } catch (Exception ex)
+            {
+                var box = MessageBoxManager.GetMessageBoxStandard(
+                    "Error",
+                    $"There was an issue loading the layout. It might be too old compared to the version of the program.",
+                    ButtonEnum.Ok,
+                    MsBox.Avalonia.Enums.Icon.Error
+                );
+                box.ShowAsync();
             }
         }
         public async Task SaveLayoutAsync()
@@ -111,6 +134,7 @@ namespace SuperVision.ViewModels
                 var layoutData = new LayoutSaveData
                 {
                     //global
+                    version = "2.3.0",
                     WindowWidth = _windowWidth,
                     WindowHeight = _windowHeight,
                     /*

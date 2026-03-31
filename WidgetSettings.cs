@@ -7,6 +7,7 @@ namespace SuperVision
 {
     public class LayoutSaveData
     {
+        public string version { get; set; } = "";
         public double WindowWidth { get; set; } = 200;
         public double WindowHeight { get; set; } = 200;
         /*public string FontName { get; set; } = "Courier New, Monospace, Consolas";

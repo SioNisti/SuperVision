@@ -11,6 +11,7 @@ namespace SuperVision
 {
     public static class Globals
     {
+        public static string VersionNumber = "2.3.0";
         private static string _baseFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SuperVision");
         public static string folder
         {

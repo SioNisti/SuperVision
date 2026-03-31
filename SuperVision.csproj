@@ -9,7 +9,7 @@
 	<PublishSingleFile>true</PublishSingleFile>
 	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 	  
-	<Version>2.2.1</Version>
+	<Version>2.3.0</Version>
 	<Authors>SioN</Authors>
 	<Company>sionTea</Company>
 	<Copyright>sionTea</Copyright>
@@ -17,7 +17,7 @@
 	<Description>Reads the memory of Super Mario Kart with SD2SNES.</Description>
 
 	<AssemblyTitle>SuperVision</AssemblyTitle>
-	<FileVersion>2.2.1</FileVersion>
+	<FileVersion>2.3.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -50,6 +50,12 @@
     <None Remove="Widgets\SessionAttempts\**" />
     <None Remove="Widgets\SessionCoursePr\**" />
     <None Remove="Widgets\SessionLapsReached\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Qrequest.cs" />
+    <Compile Remove="Qresponse.cs" />
+    <Compile Remove="SnesSocket.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -94,6 +100,9 @@
     </Compile>
     <Compile Update="Widgets\Attempts\AttemptsView.axaml.cs">
       <DependentUpon>AttemptsView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Widgets\InputDisplay\InputDisplayView.axaml.cs">
+      <DependentUpon>InputDisplayView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

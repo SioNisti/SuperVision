@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MsBox.Avalonia;
@@ -28,9 +29,19 @@ namespace SuperVision.ViewModels
     {
         public MainLogic Logic => _logic;
         private readonly MainLogic _logic = new MainLogic();
+        public Dictionary<string, string> GoodHashes = new Dictionary<string, string>();
         public ObservableCollection<WidgetViewModel> Widgets { get; set; } = new();
-        [ObservableProperty] private double _windowWidth = 192; 
+
+        //global styling
+        [ObservableProperty] private double _windowWidth = 192;
         [ObservableProperty] private double _windowHeight = 300;
+        /*[ObservableProperty] private FontFamily _fontName = new FontFamily("Courier New, Monospace, Consolas");
+        [ObservableProperty] private int _fontSize = 22;
+        [ObservableProperty] private Color _fontColor = Colors.White;
+        [ObservableProperty] private Color _bgColor = Colors.Black;
+        public static List<FontFamily> SystemFonts { get; } = FontManager.Current.SystemFonts.OrderBy(f => f.Name).ToList();
+        public List<FontFamily> AvailableFonts => SystemFonts;*/
+
         public MainWindowViewModel()
         {
             //initialize the sessiondata variable
@@ -44,6 +55,9 @@ namespace SuperVision.ViewModels
             _logic.CheckJson();
             LoadLayout();
 
+            GoodHashes.Add("NTSC-J",    "CBB853BF911255C1D8EB27CD34FC7855A0DDA218");
+            GoodHashes.Add("NTSC-U",    "47E103D8398CF5B7CBB42B95DF3A3C270691163B");
+            GoodHashes.Add("PAL",       "27D9B4F30D39AF75075691344B7BDEEDBD32AC19");
 
             //add the "logger" to the program. this is the thing that saves the data.json
             var logger = new AttemptDataService();
@@ -58,8 +72,13 @@ namespace SuperVision.ViewModels
             var layout  = JsonSerializer.Deserialize<LayoutSaveData>(json);
             var list = layout.Widgets.ToList();
 
+            //global layout styling
             _windowHeight = layout.WindowHeight;
             _windowWidth = layout.WindowWidth;
+            /*_fontName = layout.FontName;
+            _fontSize = layout.FontSize;
+            _fontColor = layout.FontColor;
+            _bgColor = layout.BgColor;*/
 
             Widgets.Clear();
             _logic.ActiveWidgets.Clear();
@@ -91,16 +110,19 @@ namespace SuperVision.ViewModels
             {
                 var layoutData = new LayoutSaveData
                 {
+                    //global
                     WindowWidth = _windowWidth,
                     WindowHeight = _windowHeight,
-                    
-                    FontName = $"{DateTime.Now.ToString()}",
-                    FontSize = (int)DateTime.Now.Ticks,
-                    FontColor = Colors.Cyan,
-                    BgColor = Colors.Cyan,
+                    /*
+                    FontName = _fontName.Name,
+                    FontSize = _fontSize,
+                    FontColor = _fontColor,
+                    BgColor = _bgColor,*/
 
+                    //widget
                     Widgets = Widgets.Select(w => new WidgetSettings
                     {
+                        //GlobalStyle = w.GlobalStyle,
                         Type = w.WidgetType,
                         FontName = w.FontName.Name,
                         FontSize = w.FontSize,
@@ -129,9 +151,7 @@ namespace SuperVision.ViewModels
         {
             while (true)
             {
-                _logic.ReadMemory();
-
-                await Task.Delay(16);
+                await _logic.ReadMemory();
             }
         }
 
@@ -140,33 +160,30 @@ namespace SuperVision.ViewModels
         {
             try
             {
-                _logic.Snessocket = new Snessocket();
-                _logic.Snessocket.wsConnect();
+                _logic.SnesSocket = new Usb2Snes.Usb2Snes();
 
-                var socket = _logic.Snessocket;
+                await _logic.SnesSocket.Connect();
 
-                if (socket != null && socket.Connected() && !_logic.isAttached)
+                var devices = await _logic.SnesSocket.GetDeviceList();
+
+                if (devices.Count > 0)
                 {
-                    string[] devices = socket.GetDevices();
+                    await _logic.SnesSocket.Attach(devices[0]);
+                    await _logic.SnesSocket.Name();
 
-                    if (devices.Length > 0)
+                    var infos = await _logic.SnesSocket.Info();
+                    foreach (var info in infos)
                     {
-                        socket.Attach(devices[0]);
-                        socket.Name("SuperVision");
+                        Debug.WriteLine(info);
+                    }
 
-                        string[] infos = socket.GetInfo();
-                        foreach (string info in infos)
-                        {
-                            Debug.WriteLine(info);
-                        }
-
-                        if (infos.Length > 0)
-                        {
-                            _logic.isAttached = true;
-                            ConnectCommand.NotifyCanExecuteChanged();
-                        }
+                    if (infos.Count > 0)
+                    {
+                        _logic.isAttached = true;
+                        ConnectCommand.NotifyCanExecuteChanged();
                     }
                 }
+
             } catch (TaskCanceledException ex)
             {
                 var box = MessageBoxManager.GetMessageBoxStandard(
@@ -265,6 +282,39 @@ namespace SuperVision.ViewModels
         private void SetGrind()
         {
             Globals.currentComparison = "Grind";
+        }
+
+
+        [RelayCommand]
+        private async Task CheckRom()
+        {
+            try
+            {
+                var infos = await _logic.SnesSocket.Info();
+                foreach (var info in infos)
+                {
+                    Debug.WriteLine(info);
+                }
+
+                //string remotePath = "/sd2snes/saves/Super Mario Kart (Japan).srm";
+                string remotePath = "/4 Special Chip Games/Super Mario Kart (Japan).sfc";
+                Debug.WriteLine($"trying to find {remotePath}.");
+                byte[] data = await _logic.SnesSocket.GetFile(remotePath);
+
+                if (data != null && data.Length > 0)
+                {
+                    await File.WriteAllBytesAsync("test.sfc", data);
+                    Debug.WriteLine($"Success! Saved {data.Length} bytes.");
+                }
+                else
+                {
+                    Debug.WriteLine("File not found or empty.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error: {ex.Message}");
+            }
         }
     }
 }

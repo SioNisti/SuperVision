@@ -9,6 +9,7 @@ namespace SuperVision.ViewModels;
 public abstract partial class WidgetViewModel : ObservableObject, IWidget
 {
 
+    //[ObservableProperty] private bool _globalStyle = false; maybe later
     [ObservableProperty] private FontFamily _fontName = new FontFamily("Courier New, Monospace, Consolas");
     [ObservableProperty] private int _fontSize = 22;
     [ObservableProperty] private Color _fontColor = Colors.White;
@@ -49,12 +50,12 @@ public abstract partial class WidgetViewModel : ObservableObject, IWidget
         BgColor = settings.BgColor;
 
         foreach (var variable in Variables)
-        {
-            if (settings.Variables.TryGetValue(variable.Name, out string? savedValue))
             {
-                variable.Value = savedValue;
+                if (settings.Variables.TryGetValue(variable.Name, out string? savedValue))
+                {
+                    variable.Value = savedValue;
+                }
             }
-        }
 
         RefreshDisplay();
     }

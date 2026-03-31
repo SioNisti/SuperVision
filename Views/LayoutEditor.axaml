@@ -11,6 +11,8 @@
         Width="350">
 
     <Grid RowDefinitions="*, Auto, Auto">
+
+        <!-- active widget list -->
         <DataGrid Grid.Row="0" Name="WidgetGrid" ItemsSource="{Binding Widgets}" AutoGenerateColumns="False" CanUserSortColumns="False">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Order" Width="80">
@@ -49,26 +51,16 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        
-        <Grid Grid.Row="1" Margin="10" ColumnDefinitions="auto,*">
-            <TextBlock Grid.Column="0" HorizontalAlignment="Stretch" Margin="0,5,10,0">Window Width</TextBlock>
-    
-            <NumericUpDown Grid.Column="1" 
-                           HorizontalAlignment="Stretch" 
-                           Margin="0,0,10,0" 
-                           Value="{Binding _mainVm.WindowWidth}" 
-                           Minimum="100" 
-                           Maximum="1920" 
-                           Increment="1" />
-        </Grid>
 
-        <Grid Grid.Row="2" Margin="10" ColumnDefinitions="*, Auto, Auto">
+        <!-- widget adding / save btn -->
+        <Grid Grid.Row="1" Margin="10" ColumnDefinitions="*, Auto, Auto">
     
             <ComboBox Grid.Column="0" 
                       ItemsSource="{Binding AvailableWidgetTypes}"
                       SelectedItem="{Binding SelectedWidgetType}"
                       HorizontalAlignment="Stretch"
                       Margin="0,0,10,0">
+
                 <ComboBox.ItemTemplate>
                     <DataTemplate x:DataType="vm:LayoutEditorViewModel+WidgetTypeLookup">
                         <TextBlock Text="{Binding Name}" />
@@ -89,5 +81,53 @@
                     Padding="15,5"
                     Background="Green" Foreground="White"/>
         </Grid>
+        <Grid Grid.Row="2" Margin="10" ColumnDefinitions="Auto, *">
+                <TextBlock Grid.Column="0" Text="Window Width:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <NumericUpDown Grid.Column="1" 
+                               Value="{Binding _mainVm.WindowWidth}"
+                               Minimum="100" Maximum="1920" Increment="1"/>
+        </Grid>
+
+        <!-- global styling -->
+        <!--
+        <StackPanel Grid.Row="2" Margin="10" Spacing="5">
+            <Separator/>
+
+            <TextBlock FontWeight="Bold">Global Styling</TextBlock>
+
+            <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto" RowSpacing="10" ColumnSpacing="10">
+                
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Window Width:" VerticalAlignment="Center"/>
+                <NumericUpDown Grid.Row="0" Grid.Column="1" 
+                               Value="{Binding _mainVm.WindowWidth}"
+                               Minimum="100" Maximum="1920" Increment="1"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Font Name:" VerticalAlignment="Center"/>
+
+                <ComboBox Grid.Row="1" Grid.Column="1" 
+                          ItemsSource="{Binding _mainVm.AvailableFonts}"
+                          SelectedItem="{Binding _mainVm.FontName}"
+                          HorizontalAlignment="Stretch">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Font Size:" VerticalAlignment="Center"/>
+                <NumericUpDown Grid.Row="2" Grid.Column="1" 
+                               Value="{Binding _mainVm.FontSize}" 
+                               Minimum="8" Maximum="72" Increment="1"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Text Color:" VerticalAlignment="Center"/>
+                <ColorPicker Grid.Row="3" Grid.Column="1" Color="{Binding _mainVm.FontColor}" Width="225"></ColorPicker>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Back Color:" VerticalAlignment="Center"/>
+                <ColorPicker Grid.Row="4" Grid.Column="1" Color="{Binding _mainVm.BgColor}" Width="225"></ColorPicker>
+                
+            </Grid>
+			
+        </StackPanel> -->
     </Grid>
 </Window>

@@ -9,10 +9,10 @@ namespace SuperVision
     {
         public double WindowWidth { get; set; } = 200;
         public double WindowHeight { get; set; } = 200;
-        public string FontName { get; set; } = "Courier New, Monospace, Consolas";
+        /*public string FontName { get; set; } = "Courier New, Monospace, Consolas";
         public int FontSize { get; set; } = 22;
         [JsonConverter(typeof(ColorJsonConverter))] public Color FontColor { get; set; } = Colors.White;
-        [JsonConverter(typeof(ColorJsonConverter))] public Color BgColor { get; set; } = Colors.Black;
+        [JsonConverter(typeof(ColorJsonConverter))] public Color BgColor { get; set; } = Colors.Black;*/
         public List<WidgetSettings> Widgets { get; set; } = new();
     }
     public partial class WidgetSettings : ObservableObject
@@ -23,9 +23,6 @@ namespace SuperVision
         [JsonConverter(typeof(ColorJsonConverter))] public Color FontColor { get; set; } = Colors.White;
         [JsonConverter(typeof(ColorJsonConverter))] public Color BgColor { get; set; } = Colors.Black;
         public Dictionary<string, string> Variables { get; set; } = new();
-
-        [ObservableProperty]
-        [JsonIgnore]
-        private string _displayText = ""; 
+        //public bool GlobalStyle { get; set; } = false;
     }
 }

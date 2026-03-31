@@ -71,4 +71,28 @@ namespace SuperVision
             return Colors.White;
         }
     }
+
+    public class BoolToBrushConverter : IValueConverter
+    {
+        private static readonly IBrush OnBrush = Brushes.White;
+
+        private static readonly IBrush OffBrush = new SolidColorBrush(Color.Parse("#404040")); // Dark Grey
+
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is bool isPressed && isPressed)
+            {
+                if (parameter is string colorCode)
+                    return Brush.Parse(colorCode);
+
+                return OnBrush;
+            }
+            return OffBrush;
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

@@ -23,6 +23,9 @@
 
             <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto, Auto" RowSpacing="10" ColumnSpacing="10">
                 
+                <!--<TextBlock Grid.Row="0" Grid.Column="0" Text="Use Global:" VerticalAlignment="Center"/>
+                <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding GlobalStyle}"></CheckBox>-->
+
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Font Name:" VerticalAlignment="Center"/>
                 <ComboBox Grid.Row="0" Grid.Column="1" 
                           ItemsSource="{Binding AvailableFonts}"

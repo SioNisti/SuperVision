@@ -1,0 +1,64 @@
+﻿ <UserControl xmlns="https://github.com/avaloniaui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:local="using:SuperVision"
+                xmlns:widget="using:SuperVision.Widgets.InputDisplay"
+                x:Class="SuperVision.Widgets.InputDisplay.InputDisplayView"
+                x:DataType="widget:InputDisplayViewModel"
+                HorizontalAlignment="Stretch"> 
+
+    <UserControl.Resources>
+        <local:ColorToBrushConverter x:Key="ColorToBrush"/>
+        <local:BoolToBrushConverter x:Key="BoolToColor"/>
+    </UserControl.Resources>
+
+    <Border Background="{Binding BgColor, Converter={StaticResource ColorToBrush}}" 
+            Padding="5" CornerRadius="5">
+        
+        <Viewbox Stretch="Uniform">
+            
+            <Grid Width="200" Height="90">
+                
+                <Border Height="10" Width="40" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0"
+                        Background="{Binding BtnL, Converter={StaticResource BoolToColor}}"/>
+                
+                <Border Height="10" Width="40" CornerRadius="5" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,10,0"
+                        Background="{Binding BtnR, Converter={StaticResource BoolToColor}}"/>
+
+
+                <Grid Width="60" Height="60" HorizontalAlignment="Left" Margin="10,15,0,0" RowDefinitions="*,*,*" ColumnDefinitions="*,*,*">
+                    <Rectangle Grid.Row="0" Grid.Column="1" Fill="{Binding DUp, Converter={StaticResource BoolToColor}}"/>
+                    <Rectangle Grid.Row="2" Grid.Column="1" Fill="{Binding DDown, Converter={StaticResource BoolToColor}}"/>
+                    <Rectangle Grid.Row="1" Grid.Column="0" Fill="{Binding DLeft, Converter={StaticResource BoolToColor}}"/>
+                    <Rectangle Grid.Row="1" Grid.Column="2" Fill="{Binding DRight, Converter={StaticResource BoolToColor}}"/>
+                    <Rectangle Grid.Row="1" Grid.Column="1" Fill="#404040"/>
+                </Grid>
+
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10" Margin="10,20,10,0">
+                    <Border Width="15" Height="10" CornerRadius="5" RenderTransform="rotate(140deg)"
+                            Background="{Binding BtnSelect, Converter={StaticResource BoolToColor}}"/>
+                    <Border Width="15" Height="10" CornerRadius="5" RenderTransform="rotate(140deg)"
+                            Background="{Binding BtnStart, Converter={StaticResource BoolToColor}}"/>
+                </StackPanel>
+
+
+                <Grid Width="60" Height="60" HorizontalAlignment="Right" Margin="0,15,10,0" RowDefinitions="*,*,*" ColumnDefinitions="*,*,*">
+                    
+                    <Ellipse Grid.Row="0" Grid.Column="1" Width="18" Height="18"
+                             Fill="{Binding BtnX, Converter={StaticResource BoolToColor}, ConverterParameter='#4444FF'}"/>
+                    
+                    <Ellipse Grid.Row="1" Grid.Column="2" Width="18" Height="18"
+                             Fill="{Binding BtnA, Converter={StaticResource BoolToColor}, ConverterParameter='#FF4444'}"/>
+                    
+                    <Ellipse Grid.Row="2" Grid.Column="1" Width="18" Height="18"
+                             Fill="{Binding BtnB, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFF44'}"/>
+                    
+                    <Ellipse Grid.Row="1" Grid.Column="0" Width="18" Height="18"
+                             Fill="{Binding BtnY, Converter={StaticResource BoolToColor}, ConverterParameter='#44FF44'}"/>
+                    
+                </Grid>
+
+            </Grid>
+        </Viewbox>
+    </Border>
+</UserControl>

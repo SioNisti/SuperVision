@@ -1,27 +1,14 @@
-﻿using Avalonia.Controls;
-using SuperVision.Services;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Sockets;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SuperVision
 {
     public class MainLogic
     {
-        //initializing variables
-        public Snessocket? Snessocket { get; set; }
+        public Usb2Snes.Usb2Snes SnesSocket { get; set; }
         public bool isAttached = false;
 
         //check if the json exists and that it's good.
@@ -79,10 +66,11 @@ namespace SuperVision
 
         public List<IWidget> ActiveWidgets { get; set; } = new();
 
-        public void ReadMemory()
+        public async Task ReadMemory()
         {
             if (!isAttached) return;
 
+            //get the addresses we want to read
             var masterAddressList = new Dictionary<uint, uint>();
             foreach (var widget in ActiveWidgets)
             {
@@ -95,11 +83,13 @@ namespace SuperVision
                 }
             }
 
+            //read the addresses
             var results = new Dictionary<uint, byte[]>();
             foreach (var entry in masterAddressList)
             {
-                byte[] data = Snessocket.GetAddress(entry.Key, entry.Value);
-                results[entry.Key] = data;
+                byte[] data = await SnesSocket.GetAddress((int)entry.Key, (int)entry.Value);
+
+                if (data != null) results[entry.Key] = data;
             }
 
             foreach (var widget in ActiveWidgets)

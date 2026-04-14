@@ -10,7 +10,9 @@ namespace SuperVision.Widgets.InputDisplay
         public override string WidgetType => "InputDisplay";
 
         public override Dictionary<uint, uint> GetRequiredAddresses() => new() {
-            { 0xF510C4, 2 } //this and the next address hold the inputs in binary
+            { 0xF510C4, 2 },    //this and the next address hold the inputs in binary
+            { 0xF511C4, 2 },    //p2
+            { 0xF5002E, 1 }     //Map/Game orient: 2 = g/m, 4 = m/g
         };
 
         [ObservableProperty] private bool _btnA;
@@ -26,9 +28,23 @@ namespace SuperVision.Widgets.InputDisplay
         [ObservableProperty] private bool _dLeft;
         [ObservableProperty] private bool _dRight;
 
+        public InputDisplayViewModel()
+        {
+            //define setting variable(s)
+            DefineVariable("Player", "Combo", "Auto", new List<string> { "Auto", "P1", "P2" });
+        }
+
         public override void UpdateState(Dictionary<uint, byte[]> data)
         {
-            if (!data.TryGetValue(0xF510C4, out var buffer) || buffer.Length < 2) return;
+            string player = GetVar("Player");
+
+            if (!data.TryGetValue(0xF5002E, out var screenData)) return;
+
+            int mapview = screenData?[0] ?? 0; //2 top game, 4 bottom game
+            bool usePlayer2 = (player == "P2") || (player == "Auto" && mapview == 4);
+
+            if (!data.TryGetValue(usePlayer2 ? 0xF511C4u : 0xF510C4u, out var buffer)) return;
+            if (buffer == null || buffer.Length < 2) return;
 
             byte lowByte = buffer[0];
             byte highByte = buffer[1];

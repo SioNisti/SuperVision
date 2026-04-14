@@ -28,6 +28,7 @@ public partial class SplitsViewModel : WidgetViewModel
     {
         //define setting variable(s)
         DefineVariable("Prefix", "Text", "Live");
+        DefineVariable("Player", "Combo", "Auto", new List<string> { "Auto", "P1", "P2" });
 
         for (int i = 0; i <= 5; i++)
         {
@@ -43,9 +44,12 @@ public partial class SplitsViewModel : WidgetViewModel
 
     public override Dictionary<uint, uint> GetRequiredAddresses() => new()
     {
-        { 0xF50F33, 30 }, //lap times
-        { 0xF50101, 3 }, //total time
-        { 0xF510F9, 1 }, //laps reached
+        { 0xF50101, 3 },    //total time
+        { 0xF50F33, 30 },   //Lap times P1
+        { 0xF510F9, 1 },    //Lap count P1
+        { 0xF50F51, 30 },   //Lap times P2
+        { 0xF511C1, 1 },    //Lap count P2
+        { 0xF5002E, 1 }     //Map/Game orient: 2 = g/m, 4 = m/g
     };
 
     public bool _clipBoardLock = false;
@@ -73,9 +77,16 @@ public partial class SplitsViewModel : WidgetViewModel
 
     public async override void UpdateState(Dictionary<uint, byte[]> data)
     {
-        if (!data.TryGetValue(0xF50F33, out var lapData)) return;
-        data.TryGetValue(0xF50101, out var totaltimeData);
-        data.TryGetValue(0xF510F9, out var lapsreachedData);
+        string player = GetVar("Player");
+
+        if (!data.TryGetValue(0xF50101, out var totaltimeData)) return;
+        data.TryGetValue(0xF5002E, out var screenData);
+        int mapview = screenData?[0] ?? 0; //2 top game, 4 bottom game
+
+        bool usePlayer2 = (player == "P2") || (player == "Auto" && mapview == 4);
+
+        data.TryGetValue(usePlayer2 ? 0xF50F51u : 0xF50F33u, out var lapData);
+        data.TryGetValue(usePlayer2 ? 0xF511C1u : 0xF510F9u, out var lapsreachedData);
 
         int lapreached = lapsreachedData[0] - 127;
 

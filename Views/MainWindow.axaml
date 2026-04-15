@@ -25,9 +25,8 @@
     <Window.ContextMenu>
         <ContextMenu FontFamily="Courier New">
             <MenuItem Header="Connect" Command="{Binding ConnectCommand}"/>
-            <MenuItem Header="Check ROM" Command="{Binding CheckRomCommand}"/>
             <Separator/>
-            <MenuItem Header="Use PAL" ToggleType="CheckBox" IsChecked="{Binding IsUsingPAL, Mode=TwoWay}" />
+            <!--<MenuItem Header="Use PAL" ToggleType="CheckBox" IsChecked="{Binding IsUsingPAL, Mode=TwoWay}" />-->
             <MenuItem Header="Comparison Mode">
                 <MenuItem Header="All Time" 
                     ToggleType="Radio" 

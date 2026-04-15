@@ -31,6 +31,7 @@ namespace SuperVision.Services
             { 0xF50036, 1 },  //Screen Mode
             { 0xF50162, 1 },  //Pause Mode
             { 0xF50124, 1 },  //current course
+            { 0x00FFD9, 1 },  //ROM HEADER FOR REGION
             { 0xF51F20, 5 }   //replay check (id = 0, 4)
         };
 
@@ -49,7 +50,10 @@ namespace SuperVision.Services
             data.TryGetValue(0xF50036, out var sModeData);
             data.TryGetValue(0xF50162, out var pModeData);
             data.TryGetValue(0xF51F20, out var replayCheckData);
+            data.TryGetValue(0x00FFD9, out var region);
 
+            Globals.currentRegion = region[0] == 0 || region[0] == 1 ? "NTSC" : "PAL";
+            Debug.WriteLine(Globals.currentRegion);
 
             int mapview = screenData?[0] ?? 0; //2 top game, 4 bottom game
             bool isP2 = (mapview == 4);

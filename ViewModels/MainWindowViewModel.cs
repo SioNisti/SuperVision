@@ -223,7 +223,7 @@ namespace SuperVision.ViewModels
         {
             return !_logic.isAttached;
         }
-
+        /*
         [ObservableProperty]
         private bool _IsUsingPAL = false;
         partial void OnIsUsingPALChanged(bool value)
@@ -232,7 +232,7 @@ namespace SuperVision.ViewModels
             {
                 Globals.currentRegion = value ? "PAL" : "NTSC";
             }
-        }
+        }*/
 
         [RelayCommand]
         private void Exit()
@@ -306,39 +306,6 @@ namespace SuperVision.ViewModels
         private void SetGrind()
         {
             Globals.currentComparison = "Grind";
-        }
-
-
-        [RelayCommand]
-        private async Task CheckRom()
-        {
-            try
-            {
-                var infos = await _logic.SnesSocket.Info();
-                foreach (var info in infos)
-                {
-                    Debug.WriteLine(info);
-                }
-
-                //string remotePath = "/sd2snes/saves/Super Mario Kart (Japan).srm";
-                string remotePath = "/4 Special Chip Games/Super Mario Kart (Japan).sfc";
-                Debug.WriteLine($"trying to find {remotePath}.");
-                byte[] data = await _logic.SnesSocket.GetFile(remotePath);
-
-                if (data != null && data.Length > 0)
-                {
-                    await File.WriteAllBytesAsync("test.sfc", data);
-                    Debug.WriteLine($"Success! Saved {data.Length} bytes.");
-                }
-                else
-                {
-                    Debug.WriteLine("File not found or empty.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error: {ex.Message}");
-            }
         }
     }
 }
